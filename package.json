@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:preview": "vite build && node scripts/build-preview.js",
     "shopify:dev": "shopify theme dev --path theme",
     "shopify:push": "npm run build && shopify theme push --path theme"
   },
