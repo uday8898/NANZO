@@ -1,0 +1,32 @@
+{%- comment -%} Usage: {% render 'product-card', product: product %} {%- endcomment -%}
+<article class="card" data-tilt data-reveal>
+  <a href="{{ product.url }}" class="card__media" aria-label="{{ product.title | escape }}">
+    {%- if product.featured_image -%}
+      <img class="card__img" src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.featured_image.alt | default: product.title | escape }}" loading="lazy" width="400" height="500">
+      {%- if product.images[1] -%}
+        <img class="card__img card__img--alt" src="{{ product.images[1] | image_url: width: 800 }}" alt="" loading="lazy" width="400" height="500">
+      {%- endif -%}
+    {%- else -%}
+      <span class="card__ph lg" style="--src:url('{{ 'shell.png' | asset_url }}')"></span>
+    {%- endif -%}
+    {%- unless product.available -%}<span class="tag">sold out</span>{%- endunless -%}
+    {%- if product.compare_at_price > product.price and product.available -%}<span class="tag tag--sale">sale</span>{%- endif -%}
+  </a>
+
+  <div class="card__body">
+    <h3 class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    <span class="price">
+      {%- if product.compare_at_price > product.price -%}<s>{{ product.compare_at_price | money }}</s> {% endif -%}
+      {{ product.price | money }}
+    </span>
+  </div>
+
+  {%- if product.available and product.variants.size == 1 -%}
+    <form class="card__add" action="{{ routes.cart_add_url }}" method="post" data-add-to-cart>
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <button class="btn btn--sm" type="submit">add to bag</button>
+    </form>
+  {%- elsif product.available -%}
+    <a class="btn btn--sm card__add" href="{{ product.url }}">choose options</a>
+  {%- endif -%}
+</article>

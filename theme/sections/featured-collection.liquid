@@ -1,0 +1,39 @@
+{%- liquid
+  assign coll = section.settings.collection
+  if coll == blank
+    assign coll = collections.all
+  endif
+-%}
+<section class="sheet featured" id="shop">
+  <div class="wrap">
+    <header class="sec-head" data-reveal>
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2>{{ section.settings.title }}</h2>
+    </header>
+
+    <div class="grid">
+      {%- for product in coll.products limit: section.settings.limit -%}
+        {% render 'product-card', product: product %}
+      {%- else -%}
+        <p class="muted">Add products to this collection to see them here ♡</p>
+      {%- endfor -%}
+    </div>
+
+    <div class="center" data-reveal>
+      <a class="btn" href="{{ coll.url }}">shop everything</a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "drop 001" },
+    { "type": "text", "id": "title", "label": "Heading", "default": "the girlies' picks" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "limit", "label": "Products to show", "min": 2, "max": 12, "step": 1, "default": 8 }
+  ],
+  "presets": [{ "name": "Featured collection" }]
+}
+{% endschema %}

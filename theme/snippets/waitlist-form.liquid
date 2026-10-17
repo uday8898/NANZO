@@ -1,0 +1,13 @@
+{%- comment -%} Creates a Shopify customer subscribed to marketing, tagged "waitlist". Usage: {% render 'waitlist-form', cta: 'notify me' %} {%- endcomment -%}
+{%- form 'customer', class: 'waitlist' -%}
+  <input type="hidden" name="contact[tags]" value="waitlist">
+  <label class="sr" for="wl-{{ section.id }}">Email</label>
+  <input id="wl-{{ section.id }}" type="email" name="contact[email]" placeholder="your email, cutie" autocomplete="email" required>
+  <button class="btn" type="submit">{{ cta | default: 'notify me ✧' }}</button>
+  {%- if form.posted_successfully? -%}
+    <p class="waitlist__msg" role="status">yay! you're on the list ♡</p>
+  {%- endif -%}
+  {%- if form.errors -%}
+    <p class="waitlist__msg waitlist__msg--err" role="alert">{{ form.errors | default_errors }}</p>
+  {%- endif -%}
+{%- endform -%}

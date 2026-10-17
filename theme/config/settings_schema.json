@@ -1,0 +1,27 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "nanzo",
+    "theme_version": "1.0.0",
+    "theme_author": "nanzo",
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://help.shopify.com/support"
+  },
+  {
+    "name": "Brand & launch",
+    "settings": [
+      { "type": "text", "id": "launch_date", "label": "Launch date (YYYY-MM-DD)", "default": "2026-11-25", "info": "Drives every countdown on the site." },
+      { "type": "checkbox", "id": "scene_3d", "label": "Enable the 3D scene", "default": true },
+      { "type": "checkbox", "id": "sound_enabled", "label": "Enable click sounds & ambient music", "default": true },
+      { "type": "text", "id": "shipping_note", "label": "Shipping note on product pages", "default": "Ships across India with Shiprocket ♡" }
+    ]
+  },
+  {
+    "name": "Social",
+    "settings": [
+      { "type": "url", "id": "social_instagram", "label": "Instagram" },
+      { "type": "url", "id": "social_tiktok", "label": "TikTok" },
+      { "type": "url", "id": "social_pinterest", "label": "Pinterest" }
+    ]
+  }
+]

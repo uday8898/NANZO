@@ -1,0 +1,36 @@
+<footer class="ftr">
+  <div class="ftr__inner">
+    <div class="ftr__cols">
+      <div>
+        <h3>{{ section.settings.heading }}</h3>
+        <p>{{ section.settings.text }}</p>
+      </div>
+      <nav aria-label="Footer">
+        <h3>help</h3>
+        {%- for link in linklists[section.settings.menu].links -%}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {%- endfor -%}
+      </nav>
+      <div>
+        <h3>follow</h3>
+        {%- if settings.social_instagram != blank -%}<a href="{{ settings.social_instagram }}" target="_blank" rel="noopener">instagram</a>{%- endif -%}
+        {%- if settings.social_tiktok != blank -%}<a href="{{ settings.social_tiktok }}" target="_blank" rel="noopener">tiktok</a>{%- endif -%}
+        {%- if settings.social_pinterest != blank -%}<a href="{{ settings.social_pinterest }}" target="_blank" rel="noopener">pinterest</a>{%- endif -%}
+        {%- if settings.social_instagram == blank and settings.social_tiktok == blank and settings.social_pinterest == blank -%}<span class="muted">add links in theme settings</span>{%- endif -%}
+      </div>
+    </div>
+    <i class="ftr__word lg" style="--src:url('{{ 'logo-horizontal.png' | asset_url }}');--c:var(--pink)" role="img" aria-label="{{ shop.name }}"></i>
+    <p class="ftr__fine">© {{ 'now' | date: '%Y' }} {{ shop.name }} · made with ♡</p>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "nanzo" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Soft, dreamy fits for the girlies who feel everything. Washing ashore 25 November." },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" }
+  ]
+}
+{% endschema %}

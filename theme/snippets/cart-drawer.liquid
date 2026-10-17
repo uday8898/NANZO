@@ -1,0 +1,17 @@
+<div class="drawer" data-cart-drawer aria-hidden="true">
+  <div class="drawer__scrim" data-cart-close></div>
+  <aside class="drawer__panel" role="dialog" aria-modal="true" aria-label="Your bag">
+    <header class="drawer__head">
+      <h2>your bag <span data-cart-count>{{ cart.item_count }}</span></h2>
+      <button class="icon-btn" type="button" data-cart-close aria-label="Close bag">✕</button>
+    </header>
+    <div class="drawer__bar" aria-hidden="true"><i data-ship-bar></i></div>
+    <p class="drawer__ship" data-ship-text></p>
+    <div class="drawer__items" data-cart-items></div>
+    <footer class="drawer__foot">
+      <div class="drawer__total"><span>subtotal</span><b data-cart-total>{{ cart.total_price | money }}</b></div>
+      <p class="muted">Taxes & shipping calculated at checkout.</p>
+      <a class="btn btn--block" href="/checkout" data-checkout>checkout ✧</a>
+    </footer>
+  </aside>
+</div>

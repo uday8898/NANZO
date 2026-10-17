@@ -1,0 +1,22 @@
+<section class="sheet news">
+  <div class="wrap news__inner">
+    <i class="news__shell lg" style="--src:url('{{ 'shell.png' | asset_url }}')" aria-hidden="true"></i>
+    <span class="eyebrow" data-reveal>{{ section.settings.eyebrow }}</span>
+    <h2 data-reveal>{{ section.settings.title }}</h2>
+    <p data-reveal>{{ section.settings.text }}</p>
+    {% render 'waitlist-form', cta: section.settings.button_label %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Newsletter / waitlist",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "the list" },
+    { "type": "text", "id": "title", "label": "Heading", "default": "be first on the shore." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Early access, secret restocks and the occasional pearl emoji. No spam, ever." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "notify me ✧" }
+  ],
+  "presets": [{ "name": "Newsletter / waitlist" }]
+}
+{% endschema %}

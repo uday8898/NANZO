@@ -1,0 +1,37 @@
+<section class="story" id="story" data-story style="--steps:{{ section.blocks.size }}">
+  <div class="story__sticky">
+    {%- for block in section.blocks -%}
+      <article class="story__step story__step--{{ block.settings.align }}" data-step {{ block.shopify_attributes }}>
+        <span class="eyebrow">{{ block.settings.eyebrow }}</span>
+        <h2>{{ block.settings.title }}</h2>
+        <p>{{ block.settings.text }}</p>
+      </article>
+    {%- endfor -%}
+    <div class="story__dots" aria-hidden="true">
+      {%- for block in section.blocks -%}<i data-dot></i>{%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Scroll story (3D)",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "01 · the shell" },
+        { "type": "text", "id": "title", "label": "Headline", "default": "Soft by design." },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Tell the story of one detail." },
+        { "type": "select", "id": "align", "label": "Text position", "default": "left", "options": [
+          { "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }, { "value": "center", "label": "Center" }
+        ] }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [{ "name": "Scroll story (3D)" }]
+}
+{% endschema %}

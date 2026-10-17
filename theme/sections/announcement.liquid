@@ -1,0 +1,21 @@
+<div class="announce" role="region" aria-label="Announcement">
+  <div class="announce__track">
+    {%- for i in (1..2) -%}
+      <div class="announce__row" {% if i == 2 %}aria-hidden="true"{% endif %}>
+        {%- for n in (1..6) -%}
+          <span>{{ section.settings.text }}</span>
+          <i class="lg" style="--src:url('{{ 'shell.png' | asset_url }}')"></i>
+        {%- endfor -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "settings": [
+    { "type": "text", "id": "text", "label": "Text", "default": "free shipping over ₹1999 ♡ drop 001 · 25 nov" }
+  ]
+}
+{% endschema %}

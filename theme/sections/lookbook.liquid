@@ -1,0 +1,41 @@
+<section class="lookbook" id="lookbook" data-gallery>
+  <div class="lookbook__pin">
+    <header class="sec-head sec-head--left" data-reveal>
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2>{{ section.settings.title }}</h2>
+    </header>
+    <div class="lookbook__track" data-gallery-track>
+      {%- for block in section.blocks -%}
+        <figure class="look look--{{ forloop.index | modulo: 4 }}" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            <img src="{{ block.settings.image | image_url: width: 900 }}" alt="{{ block.settings.caption | escape }}" loading="lazy" width="450" height="600">
+          {%- else -%}
+            <span class="look__ph lg" style="--src:url('{{ 'shell.png' | asset_url }}')"></span>
+          {%- endif -%}
+          <figcaption>{{ block.settings.caption }}</figcaption>
+        </figure>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Lookbook (horizontal scroll)",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "lookbook" },
+    { "type": "text", "id": "title", "label": "Heading", "default": "vibes, but make it wearable" }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Look",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image (3:4 works best)" },
+        { "type": "text", "id": "caption", "label": "Caption", "default": "new look" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Lookbook" }]
+}
+{% endschema %}

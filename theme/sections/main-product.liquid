@@ -1,0 +1,72 @@
+{%- assign current = product.selected_or_first_available_variant -%}
+<section class="sheet page-top pdp" data-product>
+  <div class="wrap pdp__grid">
+    <div class="pdp__gallery">
+      {%- for media in product.media -%}
+        <div class="pdp__media" data-reveal>
+          {%- case media.media_type -%}
+            {%- when 'image' -%}
+              <img src="{{ media.preview_image | image_url: width: 1400 }}" alt="{{ media.alt | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" width="700" height="875">
+            {%- when 'model' -%}
+              {{ media | model_viewer_tag: image_size: '1400x', toggleable: true }}
+            {%- else -%}
+              {{ media | media_tag: image_size: '1400x' }}
+          {%- endcase -%}
+        </div>
+      {%- else -%}
+        <div class="pdp__media pdp__media--ph"><span class="lg" style="--src:url('{{ 'shell.png' | asset_url }}')"></span></div>
+      {%- endfor -%}
+    </div>
+
+    <div class="pdp__info">
+      <span class="eyebrow">{{ product.vendor }}</span>
+      <h1 class="h-lg">{{ product.title }}</h1>
+      <p class="price price--lg" data-price>
+        {%- if current.compare_at_price > current.price -%}<s>{{ current.compare_at_price | money }}</s> {% endif -%}
+        {{ current.price | money }}
+      </p>
+
+      {%- form 'product', product, class: 'pdp__form', data-add-to-cart: 'true' -%}
+        <input type="hidden" name="id" value="{{ current.id }}" data-variant-id>
+
+        {%- unless product.has_only_default_variant -%}
+          {%- for option in product.options_with_values -%}
+            <fieldset class="opt">
+              <legend>{{ option.name }}</legend>
+              <div class="opt__row">
+                {%- for value in option.values -%}
+                  <label class="opt__pill">
+                    <input type="radio" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" data-option-index="{{ forloop.parentloop.index0 }}" {% if option.selected_value == value %}checked{% endif %}>
+                    <span>{{ value }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endfor -%}
+        {%- endunless -%}
+
+        <button class="btn btn--block btn--lg" type="submit" data-atc {% unless current.available %}disabled{% endunless %}>
+          {%- if current.available -%}add to bag ✧{%- else -%}sold out{%- endif -%}
+        </button>
+        <p class="pdp__note" data-atc-error role="alert"></p>
+      {%- endform -%}
+
+      <p class="pdp__ship">{{ settings.shipping_note }}</p>
+
+      <details class="acc" open>
+        <summary>the details</summary>
+        <div class="rte">{{ product.description }}</div>
+      </details>
+      <details class="acc">
+        <summary>shipping & returns</summary>
+        <div class="rte"><p>Orders ship within 2–3 working days via Shiprocket, with tracking sent to your email. Easy 7-day returns on unworn pieces.</p></div>
+      </details>
+    </div>
+  </div>
+
+  <script type="application/json" data-product-json>{{ product | json }}</script>
+</section>
+
+{% schema %}
+{ "name": "Product page", "settings": [] }
+{% endschema %}

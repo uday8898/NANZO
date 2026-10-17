@@ -1,0 +1,59 @@
+<section class="hero" data-hero>
+  <div class="hero__bg" aria-hidden="true">
+    {%- if section.settings.video != blank -%}
+      <video class="hero__video" autoplay muted loop playsinline preload="metadata"
+        {% if section.settings.video.preview_image %}poster="{{ section.settings.video.preview_image | image_url: width: 1600 }}"{% endif %}>
+        {%- for source in section.settings.video.sources -%}
+          <source src="{{ source.url }}" type="{{ source.mime_type }}">
+        {%- endfor -%}
+      </video>
+    {%- else -%}
+      <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="{{ 'hero-poster.jpg' | asset_url }}">
+        <source src="{{ 'hero-loop.mp4' | asset_url }}" type="video/mp4">
+      </video>
+    {%- endif -%}
+    <div class="hero__aurora"><i></i><i></i><i></i></div>
+    <div class="hero__veil"></div>
+  </div>
+
+  {%- comment -%} giant wordmark sits BEHIND the 3D canvas so the shell floats in front of it {%- endcomment -%}
+  <div class="hero__word" data-hero-word>
+    {%- for l in (1..4) -%}
+      <i class="lg hero__layer hero__layer--{{ l }}" style="--src:url('{{ 'wordmark.png' | asset_url }}')"></i>
+    {%- endfor -%}
+    <h1 class="sr">{{ shop.name }}</h1>
+  </div>
+
+  <div class="hero__ui">
+    <span class="badge" data-reveal>{{ section.settings.badge }}</span>
+    <p class="hero__sub" data-reveal>{{ section.settings.subtitle }}</p>
+
+    <div class="cd" data-countdown="{{ settings.launch_date }}" data-reveal>
+      <div><b data-cd="d">00</b><small>days</small></div>
+      <div><b data-cd="h">00</b><small>hrs</small></div>
+      <div><b data-cd="m">00</b><small>min</small></div>
+      <div><b data-cd="s">00</b><small>sec</small></div>
+    </div>
+
+    <div class="hero__cta" data-reveal>
+      <a class="btn" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}</a>
+      <a class="btn btn--glass" href="#story">our story</a>
+    </div>
+
+    <a class="scrollcue" href="#story" aria-label="Scroll down"><span></span></a>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    { "type": "video", "id": "video", "label": "Background video", "info": "Upload a short looping, muted clip (MP4, under 10 MB). Leave empty to use the built-in dreamy loop." },
+    { "type": "text", "id": "badge", "label": "Badge", "default": "coming soon ♡" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "cute fits, big feelings. something dreamy is washing ashore." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "peek the drop" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}

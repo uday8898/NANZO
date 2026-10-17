@@ -1,0 +1,35 @@
+<header class="hdr" data-header>
+  <div class="hdr__bar glass">
+    <a class="hdr__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }} home">
+      <i class="lg" style="--src:url('{{ 'wordmark.png' | asset_url }}');--c:var(--cocoa)"></i>
+    </a>
+
+    <nav class="hdr__nav" aria-label="Main">
+      {%- for link in linklists[section.settings.menu].links -%}
+        <a href="{{ link.url }}" class="hdr__link">{{ link.title }}</a>
+      {%- endfor -%}
+    </nav>
+
+    <div class="hdr__actions">
+      <button class="sound-btn" type="button" data-sound-toggle aria-pressed="true" aria-label="Sound on or off">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M11 5 6 9H3v6h3l5 4z"/><path class="wave" d="M15.5 8.5a5 5 0 0 1 0 7"/><path class="wave" d="M18.5 5.5a9 9 0 0 1 0 13"/><path class="mute" d="m16 9 5 6m0-6-5 6"/>
+        </svg>
+        <span data-sound-label>sound on</span>
+      </button>
+      <button class="bag-btn" type="button" data-cart-open aria-label="Open bag">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span>bag</span><b data-cart-count>{{ cart.item_count }}</b>
+      </button>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" }
+  ]
+}
+{% endschema %}
