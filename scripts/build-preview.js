@@ -57,14 +57,11 @@ fs.writeFileSync(path.join(OUT, 'assets', 'preview-shim.js'), `(() => {
 
 const { renderPage } = createRenderer({ assetUrl: (v) => `/assets/${v}` })
 
+// only the coming-soon page is public for now (store templates live in *.store.json)
 const pages = [
   ['/', 'index.html'],
-  ['/collections/all', 'collections/all/index.html'],
-  ['/cart', 'cart/index.html'],
   ['/password', 'password/index.html'],
-  ['/pages/about', 'pages/about/index.html'],
   ['/404', '404.html'],
-  ...PRODUCTS.map((p) => [p.url, `${p.url.slice(1)}/index.html`]),
 ]
 
 for (const [url, file] of pages) {

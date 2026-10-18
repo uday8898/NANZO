@@ -1,4 +1,5 @@
 {
-  "sections": { "main": { "type": "main-collection", "settings": {} } },
+  "layout": "password",
+  "sections": { "main": { "type": "coming-soon", "settings": {} } },
   "order": ["main"]
 }

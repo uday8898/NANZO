@@ -42,3 +42,13 @@ coming-soon page (countdown + waitlist). Waitlist signups become Shopify custome
 ## Shiprocket
 Install the Shiprocket app from the Shopify App Store (or Shiprocket → Channels → Add Channel → Shopify).
 Orders then sync automatically; no theme code is needed.
+
+## Coming-soon-only mode (current)
+Every public template (`index`, `collection`, `product`, `cart`, `page`, `404`) renders only the **Coming soon**
+section. The full store versions are kept as alternate templates: `index.store.json`, `collection.store.json`,
+`product.store.json`, `cart.store.json`, `page.store.json`, `404.store.json`.
+**To launch the full store:** in `theme/templates/`, overwrite each `X.json` with its `X.store.json`
+(and remove the `"layout": "password"` line), then push.
+
+Email signups use Shopify's customer form: each address becomes a customer (email marketing: subscribed)
+tagged `waitlist`. View them in Shopify Admin → Customers (filter by tag `waitlist`).

@@ -1,4 +1,5 @@
 {
-  "sections": { "main": { "type": "main-cart", "settings": {} } },
+  "layout": "password",
+  "sections": { "main": { "type": "coming-soon", "settings": {} } },
   "order": ["main"]
 }

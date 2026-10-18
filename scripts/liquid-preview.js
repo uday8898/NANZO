@@ -173,7 +173,7 @@ export function createRenderer({ assetUrl }) {
       }
       const parts = []
       for (const id of tpl.order) parts.push(await renderSection(tpl.sections[id].type, id, tpl.sections[id], scope))
-      const layout = name === 'password' ? 'password' : 'theme'
+      const layout = tpl.layout || (name === 'password' ? 'password' : 'theme')
       return engine.parseAndRender(read('layout', `${layout}.liquid`), { ...globals(), ...scope, content_for_layout: parts.join('\n') })
     }
 

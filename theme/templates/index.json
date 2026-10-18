@@ -1,30 +1,5 @@
 {
-  "sections": {
-    "hero": { "type": "hero", "settings": {} },
-    "story": {
-      "type": "story",
-      "blocks": {
-        "s1": { "type": "step", "settings": { "eyebrow": "01 · the shell", "title": "Soft by design.", "text": "Every nanzo piece starts with a feeling: sun-warm sand, sea-glass pastels and fabric that hugs back.", "align": "left" } },
-        "s2": { "type": "step", "settings": { "eyebrow": "02 · the pearl", "title": "Pearl-level details.", "text": "Tiny finishes you'll notice only when someone says \"wait, where is that from?\"", "align": "right" } },
-        "s3": { "type": "step", "settings": { "eyebrow": "03 · the drop", "title": "Made to be loved.", "text": "Small batches. Big feelings. Dropping 25 November.", "align": "center" } }
-      },
-      "block_order": ["s1", "s2", "s3"],
-      "settings": {}
-    },
-    "featured": { "type": "featured-collection", "settings": {} },
-    "lookbook": {
-      "type": "lookbook",
-      "blocks": {
-        "l1": { "type": "slide", "settings": { "caption": "beach club" } },
-        "l2": { "type": "slide", "settings": { "caption": "pearl hour" } },
-        "l3": { "type": "slide", "settings": { "caption": "sea glass" } },
-        "l4": { "type": "slide", "settings": { "caption": "coquette core" } },
-        "l5": { "type": "slide", "settings": { "caption": "golden tide" } }
-      },
-      "block_order": ["l1", "l2", "l3", "l4", "l5"],
-      "settings": {}
-    },
-    "newsletter": { "type": "newsletter", "settings": {} }
-  },
-  "order": ["hero", "story", "featured", "lookbook", "newsletter"]
+  "layout": "password",
+  "sections": { "main": { "type": "coming-soon", "settings": {} } },
+  "order": ["main"]
 }

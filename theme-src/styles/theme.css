@@ -270,3 +270,6 @@ body:not(.template-index) .sheet{background:transparent;border-radius:0}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
   .js [data-reveal]{opacity:1;transform:none}
 }
+
+/* floating sound pill for pages without a header (coming soon) */
+.sound-btn--float{position:fixed;top:16px;right:16px;z-index:60}
