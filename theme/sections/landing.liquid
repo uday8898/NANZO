@@ -12,6 +12,7 @@
     --m:url('{{ 'landing-logo.png' | asset_url }}');
     --s:url('{{ 'landing-shell.png' | asset_url }}');
     --img-sky:url('{{ 'landing-sky.webp' | asset_url }}');
+    --img-fresco:url('{{ 'landing-fresco.webp' | asset_url }}');
     --img-i0:url('{% if section.settings.photo_0 != blank %}{{ section.settings.photo_0 | image_url: width: 1400 }}{% else %}{{ 'landing-i0.webp' | asset_url }}{% endif %}');
     --img-i1:url('{% if section.settings.photo_1 != blank %}{{ section.settings.photo_1 | image_url: width: 2000 }}{% else %}{{ 'landing-i1.webp' | asset_url }}{% endif %}');
     --img-i2:url('{% if section.settings.photo_2 != blank %}{{ section.settings.photo_2 | image_url: width: 1400 }}{% else %}{{ 'landing-i2.webp' | asset_url }}{% endif %}');
@@ -44,6 +45,7 @@
 </nav>
 
 <header class="hero" id="top">
+  <div class="fresco" aria-hidden="true"><i class="spark"></i></div>
   <div class="moon"></div>
   <div class="arch a1 i0"></div><div class="arch a2 i5"></div>
   <div>
