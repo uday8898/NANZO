@@ -10,11 +10,11 @@ export default defineConfig(({ command }) => ({
   build: {
     outDir: 'theme/assets',
     emptyOutDir: false,
-    cssCodeSplit: false,
+    cssCodeSplit: true,
     modulePreload: false,
     chunkSizeWarningLimit: 1500,
     rollupOptions: {
-      input: 'theme-src/main.js',
+      input: { theme: 'theme-src/main.js', landing: 'theme-src/landing/landing.js' },
       output: {
         // Shopify serves theme.js as `theme.js?v=<hash>`, but a lazy chunk importing it as plain `theme.js`
         // makes the browser run the entry TWICE (double click handlers, double sounds). So anything shared
@@ -23,10 +23,10 @@ export default defineConfig(({ command }) => ({
           if (id.includes('node_modules/gsap')) return 'gsap'
           if (id.includes('theme-src/state.js')) return 'state'
         },
-        // fixed names: Liquid references theme.js / theme.css via asset_url
-        entryFileNames: 'theme.js',
+        // fixed names: Liquid references theme.js / theme.css / landing.js / landing.css via asset_url
+        entryFileNames: '[name].js',
         chunkFileNames: 'theme-[name].[hash].js',
-        assetFileNames: (a) => ((a.name || '').endsWith('.css') ? 'theme.css' : '[name][extname]'),
+        assetFileNames: (a) => ((a.name || '').endsWith('.css') ? '[name].css' : '[name][extname]'),
       },
     },
   },

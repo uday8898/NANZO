@@ -1,0 +1,209 @@
+{%- liquid
+  assign coll = section.settings.collection
+  if coll == blank
+    assign coll = collections['after-hours']
+  endif
+  assign limit = section.settings.products_limit | default: 8
+  assign instagram = section.settings.instagram_url | default: settings.social_instagram | default: '#'
+-%}
+
+<style>
+  :root{
+    --m:url('{{ 'landing-logo.png' | asset_url }}');
+    --s:url('{{ 'landing-shell.png' | asset_url }}');
+    --img-sky:url('{{ 'landing-sky.webp' | asset_url }}');
+    --img-i0:url('{% if section.settings.photo_0 != blank %}{{ section.settings.photo_0 | image_url: width: 1400 }}{% else %}{{ 'landing-i0.webp' | asset_url }}{% endif %}');
+    --img-i1:url('{% if section.settings.photo_1 != blank %}{{ section.settings.photo_1 | image_url: width: 2000 }}{% else %}{{ 'landing-i1.webp' | asset_url }}{% endif %}');
+    --img-i2:url('{% if section.settings.photo_2 != blank %}{{ section.settings.photo_2 | image_url: width: 1400 }}{% else %}{{ 'landing-i2.webp' | asset_url }}{% endif %}');
+    --img-i3:url('{% if section.settings.photo_3 != blank %}{{ section.settings.photo_3 | image_url: width: 1400 }}{% else %}{{ 'landing-i3.webp' | asset_url }}{% endif %}');
+    --img-i4:url('{% if section.settings.photo_4 != blank %}{{ section.settings.photo_4 | image_url: width: 1400 }}{% else %}{{ 'landing-i4.webp' | asset_url }}{% endif %}');
+    --img-i5:url('{% if section.settings.photo_5 != blank %}{{ section.settings.photo_5 | image_url: width: 1400 }}{% else %}{{ 'landing-i5.webp' | asset_url }}{% endif %}');
+    --img-i6:url('{% if section.settings.photo_6 != blank %}{{ section.settings.photo_6 | image_url: width: 1600 }}{% else %}{{ 'landing-i6.webp' | asset_url }}{% endif %}');
+  }
+</style>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<div id="gate">
+  <div class="gh gl"><i></i></div><div class="gh gr2"><i></i></div>
+  <div class="gc">
+    <div class="lg" role="img" aria-label="Nanzo"></div>
+    <p class="p">After Hours, the first drop</p>
+    <button class="gb" id="e1" type="button">Enter with sound</button>
+    <button class="gq" id="e0" type="button">Enter quietly</button>
+  </div>
+</div>
+<button id="snd" type="button" hidden>Sound on</button>
+
+<nav aria-label="Main">
+  <a href="#top" aria-label="Nanzo" class="lg"></a>
+  <span>
+    <a href="#drop">After Hours</a><a href="#currency">Currency</a><a href="#pack">Packaging</a><a href="#world">Our world</a>
+    <button type="button" class="bagl" id="bag" aria-haspopup="dialog">Bag (<span id="bagn">0</span>)</button>
+  </span>
+</nav>
+
+<header class="hero" id="top">
+  <div class="moon"></div>
+  <div class="arch a1 i0"></div><div class="arch a2 i5"></div>
+  <div>
+    <h1 class="lg" role="img" aria-label="Nanzo"></h1>
+    <div class="sub p">After Hours</div>
+    <p class="ln">The first drop. Clothes for the part of the day that starts when everything else stops.</p>
+  </div>
+</header>
+<div class="mq p" aria-hidden="true"><div id="mq"></div></div>
+
+<section class="st"><p class="p" id="stm">all that you deserve. and some more.</p></section>
+
+<section class="ht" id="heart">
+  <div class="arch i0"></div>
+  <div>
+    <h2 class="p">The “I have nothing to wear” moment.</h2>
+    <p>Every girl knows the feeling. The flights are booked, the invite is close, the wardrobe is full, and somehow there’s nothing to wear.</p>
+    <p>Nanzo was born for that moment. Not for Tuesdays, but for birthdays, bachelorettes, vacations and the nights you’ll want photos of. Every print and silhouette is chosen because we’re in love with it, never because it’s trending.</p>
+    <p>And we don’t design alone. Before a piece is final, it’s tried on, talked about and reworked with the girls of India.</p>
+  </div>
+</section>
+<section class="ms"><div class="bg i1"></div><div class="mt"><h2 class="p">No girl in front of a full wardrobe with nothing to wear for the moments that matter.</h2><p>We believe occasions deserve outfits with intention, not leftovers from an ordinary week.</p></div></section>
+<section class="pl"><h2 class="p">Three pillars</h2><div class="pls"><div style="--c:var(--powder)"><h3 class="p">Love over trend</h3><p>We only make what we’re in love with.</p></div><div style="--c:var(--rose)"><h3 class="p">Made for occasions</h3><p>Birthdays, bachelorettes, vacations, big nights. Not everyday wear.</p></div><div style="--c:var(--matcha)"><h3 class="p">Co-created</h3><p>Every piece is tried on, discussed and reworked with our community.</p></div></div></section>
+<section class="ch"><div><h2 class="p">If Nanzo were a person, she’d be</h2><ul><li><b>The friend who plans the party</b>Enthusiastic and dependable.</li><li><b>Opinionated about taste</b>No need to follow the crowd.</li><li><b>Inclusive</b>She asks for opinions and actually uses them.</li><li><b>Fun with substance</b>She cares about how things are made.</li></ul></div><div class="arch i3"></div></section>
+
+<section class="drop" id="drop"><div class="stk">
+  <div class="dh2"><h2 class="p">After Hours</h2><p>Drop 01. Eight pieces, each with its own packaging and a little something to keep. When they’re gone, they’re gone.</p></div>
+  <div class="pg" id="pg"></div>
+  <div class="fb2" id="fb2"><span class="p">Wear the whole night.</span><button class="atc" id="all" type="button">Add all to cart</button></div>
+</div></section>
+
+<section class="cu" id="currency">
+  <div><div class="nt i6" role="img" aria-label="A Nanzo currency note"></div></div>
+  <div>
+    <h2 class="p">Nanzo currency</h2>
+    <p>Every order comes with Nanzo currency. Collect 5 and your next piece is 50% off. Collect 7 and one piece is on us. Whichever you choose.</p>
+    <div class="sl" id="sl"><i></i><i></i><i></i><i></i><i data-r="50% off"></i><i></i><i data-r="1 piece free"></i></div>
+    <p id="cm" class="p"></p>
+    <div class="cb"><button class="atc" id="o" type="button">Place an order</button><button class="atc" id="r5" type="button" hidden>Use 50% off</button><button class="atc" id="r7" type="button" hidden>Claim free piece</button></div>
+  </div>
+</section>
+
+<section class="pk" id="pack">
+  <div><h2 class="p">Every piece arrives in a gift.</h2><p>Each collection has its own packaging and something small to keep. A currency note is tucked in every order.</p><p class="hint2">Tap the box.</p></div>
+  <button class="bx" id="bx" type="button" data-cur="open" aria-label="Open the box" aria-pressed="false"><span class="bd"><span class="sh2"></span></span><span class="in"><span class="cl"></span><span class="nt2 i6"></span></span><span class="lid"></span></button>
+</section>
+
+<section class="gr" id="ready">
+  <h2 class="p">Get ready with nanzo</h2>
+  <div class="scene" id="sc">
+    <img src="{{ 'landing-wardrobe.webp' | asset_url }}" width="1338" height="753" loading="lazy" alt="A pixel-art girl in a robe between two open wardrobes">
+    <div id="bub" class="p" aria-live="polite"></div>
+  </div>
+  <div class="look"><canvas id="lc" width="96" height="96" aria-hidden="true"></canvas><div class="p" id="ln2">Pick something from the wardrobes.</div><button class="atc" id="atc" type="button">Add to cart</button></div>
+</section>
+
+<section class="wd" id="world">
+  <h2 class="p">Nanzo world</h2>
+  <p class="wl">Every collection brings its own packaging, events, creators and styles. Step inside a movement.</p>
+  <div class="col">
+    <button type="button" data-open="after-hours" data-cur="step in"><span class="p">After Hours</span><em>Drop 01, open now</em></button>
+    <div><span class="p">Birthdays</span><em>Opening soon</em></div>
+    <div><span class="p">Bachelorettes</span><em>Opening soon</em></div>
+    <div><span class="p">Vacations</span><em>Opening soon</em></div>
+    <div><span class="p">Big nights</span><em>Opening soon</em></div>
+  </div>
+  <div class="rw" id="r1" aria-hidden="true"></div><div class="rw" id="r2" aria-hidden="true"></div>
+  <small>Updated every month with raw images from the collection, the brand and the packaging.</small>
+</section>
+
+<section class="ab" id="about">
+  {%- if section.settings.founder_photo != blank -%}
+    <div class="arch" style="background:url('{{ section.settings.founder_photo | image_url: width: 1000 }}') center/cover"></div>
+  {%- else -%}
+    <div class="arch" data-t="founder portrait"></div>
+  {%- endif -%}
+  <div>
+    <h2 class="p">Hello, I’m {{ section.settings.founder_name }}.</h2>
+    <p>Nanzo is a small label making clothes that feel like an occasion. Every collection arrives with its own world, its own packaging and a little collectible to keep, because getting dressed should feel like opening a gift.</p>
+    <div class="rte">{{ section.settings.founder_story }}</div>
+  </div>
+</section>
+<div class="cm" aria-hidden="true"><div class="arch"></div><div class="arch"></div><div class="arch"></div><div class="arch"></div><div class="arch"></div></div>
+
+<footer id="ft">
+  <div style="position:relative">
+    <h2 class="p">Nothing to wear? Not tonight.</h2>
+    <div class="fl"><a href="#drop">After Hours</a><a href="#currency">Currency</a><a href="#pack">Packaging</a><a href="#ready">Get ready</a><a href="#world">Our world</a><a href="{{ instagram }}" target="_blank" rel="noopener">Instagram</a><a href="/policies/shipping-policy">Shipping and returns</a></div>
+    <p class="hint">Run your hand through the shells. Someone left something.</p>
+  </div>
+  <div class="lg fo" role="img" aria-label="Nanzo"></div>
+  <button id="tk" type="button" data-code="{{ section.settings.discount_code }}" aria-label="Copy discount code {{ section.settings.discount_code }}"><span>10% off After Hours</span><b class="p">{{ section.settings.discount_code }}</b><small>tap to copy</small></button>
+  <canvas id="fc" aria-hidden="true"></canvas>
+</footer>
+
+<div id="wp" hidden role="dialog" aria-modal="true" aria-label="After Hours world">
+  <button class="wx" id="wx" type="button">Back to Nanzo</button>
+  <header><p class="w">Movement one</p><h1 class="p">After Hours</h1><p>Drop 01, from the first sketch to the box on your doorstep.</p></header>
+  <section><h2 class="p">Ideation</h2><div class="st4"><div><div class="arch" data-t="sketch" style="--g:linear-gradient(#D9E8E1,#FFFAF0)"></div><h3 class="p">Sketched</h3><p>Prints and silhouettes we’re in love with.</p></div><div><div class="arch" data-t="fitting" style="--g:linear-gradient(#FCB1C5,#FFE9EF)"></div><h3 class="p">Tried on</h3><p>On real girls, in real rooms.</p></div><div><div class="arch" data-t="notes" style="--g:linear-gradient(#D8CC7A,#FFFAF0)"></div><h3 class="p">Talked about</h3><p>Honest opinions, written down and used.</p></div><div><div class="arch" data-t="final" style="--g:linear-gradient(#8E8A43,#D8CC7A)"></div><h3 class="p">Reworked</h3><p>Changed until it was right.</p></div></div></section>
+  <section class="wb"><h2 class="p">Packaging</h2><div class="st4 three"><div class="arch" data-t="outer box" style="--g:linear-gradient(#FCB1C5,#FFFAF0)"></div><div class="arch" data-t="tissue and tag" style="--g:linear-gradient(#D9E8E1,#FFE9EF)"></div><div class="arch" data-t="collectible" style="--g:linear-gradient(#D8CC7A,#FFFAF0)"></div></div></section>
+  <section><h2 class="p">Creators</h2><div class="cr"><div class="arch"></div><div class="arch"></div><div class="arch"></div><div class="arch"></div><div class="arch"></div></div><p class="cn">Creator portraits go here.</p></section>
+  <section class="wb"><h2 class="p">Raw shoot</h2><div class="ra"><div class="i0"></div><div class="i4"></div><div class="i5"></div><div class="i1"></div><div class="i2"></div><div class="i3"></div></div></section>
+  <footer class="wf"><h2 class="p">Wear the whole night.</h2><button class="atc" id="wd2" type="button">Back to the drop</button></footer>
+</div>
+
+{%- comment -%} bag drawer, filled by landing.js from the real Shopify cart {%- endcomment -%}
+<div id="cd" aria-hidden="true">
+  <div class="sc" data-close></div>
+  <aside class="pn" role="dialog" aria-modal="true" aria-label="Your bag">
+    <div class="hd"><h2 class="p">Your bag</h2><button class="x" type="button" data-close aria-label="Close bag">×</button></div>
+    <div class="it" id="cdi"></div>
+    <div class="ft"><div class="tt"><span>Subtotal</span><b id="cdt">₹0</b></div><a class="atc" href="/checkout" id="cdc">Checkout</a></div>
+  </aside>
+</div>
+
+<i id="pr"></i><div id="cur"><span></span></div>
+
+{%- comment -%} Drop products from Shopify (collection "after-hours" unless another is chosen). Empty = design placeholders. {%- endcomment -%}
+<script type="application/json" id="nzl-products">
+[
+{%- if coll != blank -%}
+  {%- for p in coll.products limit: limit -%}
+  {
+    "id": {{ p.id | json }},
+    "title": {{ p.title | json }},
+    "url": {{ p.url | json }},
+    "image": {{ p.featured_image | image_url: width: 900 | json }},
+    "price": {{ p.price | json }},
+    "compare": {{ p.compare_at_price | json }},
+    "options": {{ p.options | json }},
+    "variants": [{%- for v in p.variants -%}{"id":{{ v.id | json }},"title":{{ v.title | json }},"available":{{ v.available | json }},"price":{{ v.price | json }},"options":{{ v.options | json }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}]
+  }{% unless forloop.last %},{% endunless %}
+  {%- endfor -%}
+{%- endif -%}
+]
+</script>
+
+{% schema %}
+{
+  "name": "Landing page",
+  "settings": [
+    { "type": "header", "content": "The drop" },
+    { "type": "collection", "id": "collection", "label": "Drop collection", "info": "Leave empty to use the collection with the handle \"after-hours\". With no products it shows the design placeholders." },
+    { "type": "range", "id": "products_limit", "label": "Pieces to show", "min": 2, "max": 8, "step": 1, "default": 8 },
+    { "type": "text", "id": "discount_code", "label": "Discount code on the footer ticket", "default": "AFTERHOURS10", "info": "Create this code in Shopify → Discounts, or it won't work at checkout." },
+    { "type": "header", "content": "About" },
+    { "type": "text", "id": "founder_name", "label": "Founder name", "default": "[founder name]" },
+    { "type": "richtext", "id": "founder_story", "label": "Founder story", "default": "<p>[Add your story here: why Nanzo, why After Hours.]</p>" },
+    { "type": "image_picker", "id": "founder_photo", "label": "Founder portrait" },
+    { "type": "header", "content": "Links" },
+    { "type": "url", "id": "instagram_url", "label": "Instagram (falls back to theme settings)" },
+    { "type": "header", "content": "Photos (optional, defaults are bundled)" },
+    { "type": "image_picker", "id": "photo_0", "label": "Sequins / heart section / hero arch" },
+    { "type": "image_picker", "id": "photo_1", "label": "Wide mood image (full-bleed)" },
+    { "type": "image_picker", "id": "photo_2", "label": "Raw shoot 3" },
+    { "type": "image_picker", "id": "photo_3", "label": "Persona section / raw shoot 4" },
+    { "type": "image_picker", "id": "photo_4", "label": "Raw shoot 2" },
+    { "type": "image_picker", "id": "photo_5", "label": "Hero arch (right)" },
+    { "type": "image_picker", "id": "photo_6", "label": "Currency note" }
+  ],
+  "presets": [{ "name": "Landing page" }]
+}
+{% endschema %}

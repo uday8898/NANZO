@@ -155,7 +155,7 @@ export function createRenderer({ assetUrl, store = false }) {
           'main-menu': linklist([['Shop', '/collections/all'], ['Lookbook', '/#lookbook'], ['About', '/pages/about']]),
           footer: linklist([['Shipping', '/pages/shipping'], ['Returns', '/pages/returns'], ['Contact', '/pages/contact']]),
         },
-        collections: { all: { title: 'All pieces', handle: 'all', url: '/collections/all', products: PRODUCTS, products_count: PRODUCTS.length, all_products_count: PRODUCTS.length, sort_by: 'manual' } },
+        collections: (() => { const c = { title: 'All pieces', handle: 'all', url: '/collections/all', products: PRODUCTS, products_count: PRODUCTS.length, all_products_count: PRODUCTS.length, sort_by: 'manual' }; return { all: c, 'after-hours': process.env.NZ_EMPTY_DROP ? null : { ...c, title: 'After Hours', handle: 'after-hours' } } })(),
         cart: cartJson(), customer: null, content_for_header: '', canonical_url: 'http://localhost:5173/', page_description: '',
       }
     }
@@ -210,7 +210,7 @@ export function createRenderer({ assetUrl, store = false }) {
   return { renderPage }
 }
 
-const devAssetUrl = (v) => (v === 'theme.js' ? '/theme-src/main.js' : v === 'theme.css' ? '/theme-src/empty.css' : `/theme/assets/${v}`)
+const devAssetUrl = (v) => (v === 'theme.js' ? '/theme-src/main.js' : v === 'landing.js' ? '/theme-src/landing/landing.js' : v === 'theme.css' || v === 'landing.css' ? '/theme-src/empty.css' : `/theme/assets/${v}`)
 
 export function liquidPreview() {
   return {
@@ -229,12 +229,18 @@ export function liquidPreview() {
         if (p === '/cart/add.js' && req.method === 'POST') {
           const chunks = []; for await (const c of req) chunks.push(c)
           const body = Buffer.concat(chunks).toString()
-          const m = body.match(/name="id"\r\n\r\n(\d+)/) || body.match(/id=(\d+)/)
-          const id = m ? +m[1] : 1000
-          const prod = PRODUCTS.find((x) => x.variants.some((v) => v.id === id)) || PRODUCTS[0]
-          const line = CART.find((l) => l.id === id)
-          if (line) line.qty++; else CART.push({ id, qty: 1, p: prod })
-          res.setHeader('content-type', 'application/json'); return res.end(JSON.stringify({ id }))
+          // accepts the theme's form posts (id=...) and the landing page's JSON {items:[{id,quantity}]}
+          let ids = []
+          try { const j = JSON.parse(body); ids = (j.items || [j]).map((i) => +i.id) } catch {
+            const m = body.match(/name="id"\r\n\r\n(\d+)/) || body.match(/id=(\d+)/)
+            ids = [m ? +m[1] : 1000]
+          }
+          for (const id of ids) {
+            const prod = PRODUCTS.find((x) => x.variants.some((v) => v.id === id)) || PRODUCTS[0]
+            const line = CART.find((l) => l.id === id)
+            if (line) line.qty++; else CART.push({ id, qty: 1, p: prod })
+          }
+          res.setHeader('content-type', 'application/json'); return res.end(JSON.stringify({ items: ids.map((id) => ({ id })) }))
         }
         if (p === '/cart/change.js' && req.method === 'POST') {
           const chunks = []; for await (const c of req) chunks.push(c)

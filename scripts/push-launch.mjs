@@ -14,6 +14,8 @@ const NAME = 'nanzo-launch'
 const SRC = path.resolve('theme')
 const OUT = path.resolve('.launch')
 const checkOnly = process.argv.includes('--check-only')
+const ID_FILE = path.resolve('scripts/launch-theme.json')
+const themeId = fs.existsSync(ID_FILE) ? JSON.parse(fs.readFileSync(ID_FILE, 'utf8')).id : null
 const run = (cmd, args) => {
   const r = spawnSync(cmd, args, { stdio: 'inherit', shell: true })
   if (r.status !== 0) process.exit(r.status || 1)
@@ -39,5 +41,10 @@ run('npx', ['--yes', '@shopify/cli@latest', 'theme', 'check', '--path', '.launch
 
 if (checkOnly) process.exit(0)
 
-console.log(`4/4 pushing to ${STORE} as unpublished theme "${NAME}" …`)
-run('npx', ['--yes', '@shopify/cli@latest', 'theme', 'push', '--path', '.launch', '--store', STORE, '--unpublished', '--theme', NAME, '--no-color'])
+if (themeId) {
+  console.log(`4/4 updating existing theme ${themeId} (${NAME}) on ${STORE} …`)
+  run('npx', ['--yes', '@shopify/cli@latest', 'theme', 'push', '--path', '.launch', '--store', STORE, '--theme', String(themeId), '--no-color'])
+} else {
+  console.log(`4/4 creating unpublished theme "${NAME}" on ${STORE} … (then save its id in scripts/launch-theme.json)`)
+  run('npx', ['--yes', '@shopify/cli@latest', 'theme', 'push', '--path', '.launch', '--store', STORE, '--unpublished', '--theme', NAME, '--no-color'])
+}
