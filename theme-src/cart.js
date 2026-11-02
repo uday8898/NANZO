@@ -69,7 +69,7 @@ export function initCart() {
 
   // every add-to-bag form (cards, product page) goes through here, no page reload
   document.addEventListener('submit', async (e) => {
-    const f = e.target.closest?.('form[data-add-to-cart]')
+    const f = e.target.closest?.('form[data-add-to-cart], form[action*="/cart/add"]')
     if (!f) return
     e.preventDefault()
     const btn = f.querySelector('button[type="submit"]')

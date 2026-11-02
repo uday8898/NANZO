@@ -183,7 +183,7 @@
     "id": {{ p.id | json }},
     "title": {{ p.title | json }},
     "url": {{ p.url | json }},
-    "image": {{ p.featured_image | image_url: width: 900 | json }},
+    "image": {% if p.featured_image %}{{ p.featured_image | image_url: width: 900 | json }}{% else %}null{% endif %},
     "price": {{ p.price | json }},
     "compare": {{ p.compare_at_price | json }},
     "options": {{ p.options | json }},
