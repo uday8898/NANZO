@@ -1,27 +1,54 @@
-{%- paginate collection.products by 12 -%}
-<section class="sheet page-top">
-  <div class="wrap">
-    <header class="sec-head sec-head--left" data-reveal>
-      <span class="eyebrow">collection</span>
-      <h1 class="h-xl">{{ collection.title }}</h1>
-      {%- if collection.description != blank -%}<p class="lede">{{ collection.description | strip_html | truncate: 200 }}</p>{%- endif -%}
+{%- paginate collection.products by section.settings.per_page -%}
+<section class="coll">
+  <div class="coll__wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ routes.root_url }}">Home</a><span aria-hidden="true">/</span><span>{{ collection.title }}</span></nav>
+
+    <header class="coll__head">
+      <h1 class="coll__title">{{ collection.title }}</h1>
+      {%- if collection.description != blank -%}
+        <p class="coll__tag">{{ collection.description | strip_html | truncate: 120 }}</p>
+      {%- endif -%}
     </header>
 
-    <div class="grid">
+    <div class="coll__bar">
+      <span class="coll__count">{{ collection.products_count }} {% if collection.products_count == 1 %}piece{% else %}pieces{% endif %}</span>
+      {%- if collection.sort_options.size > 0 -%}
+        <form class="coll__sort" method="get">
+          <label for="sort">Sort by</label>
+          <select id="sort" name="sort_by" onchange="this.form.submit()">
+            {%- assign current_sort = collection.sort_by | default: collection.default_sort_by -%}
+            {%- for opt in collection.sort_options -%}
+              <option value="{{ opt.value }}" {% if opt.value == current_sort %}selected{% endif %}>{{ opt.name }}</option>
+            {%- endfor -%}
+          </select>
+        </form>
+      {%- endif -%}
+    </div>
+
+    <div class="coll__grid">
       {%- for product in collection.products -%}
         {% render 'product-card', product: product %}
       {%- else -%}
-        <p class="muted">Nothing here yet — check back soon ♡</p>
+        <div class="coll__empty"><i class="lg" style="--src:url('{{ 'shell.png' | asset_url }}')"></i><p>Nothing here yet. Check back soon.</p></div>
       {%- endfor -%}
     </div>
 
     {%- if paginate.pages > 1 -%}
-      <nav class="pager" aria-label="Pagination">{{ paginate | default_pagination }}</nav>
+      <nav class="pager" aria-label="Pagination">
+        {%- if paginate.previous -%}<a class="pager__a" href="{{ paginate.previous.url }}">&larr; Previous</a>{%- endif -%}
+        <span class="pager__now">Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+        {%- if paginate.next -%}<a class="pager__a" href="{{ paginate.next.url }}">Next &rarr;</a>{%- endif -%}
+      </nav>
     {%- endif -%}
   </div>
 </section>
 {%- endpaginate -%}
 
 {% schema %}
-{ "name": "Collection page", "settings": [] }
+{
+  "name": "Collection page",
+  "settings": [
+    { "type": "range", "id": "per_page", "label": "Pieces per page", "min": 8, "max": 24, "step": 4, "default": 12 }
+  ]
+}
 {% endschema %}

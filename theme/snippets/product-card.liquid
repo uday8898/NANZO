@@ -1,5 +1,5 @@
-{%- comment -%} Usage: {% render 'product-card', product: product %} {%- endcomment -%}
-<article class="card" data-tilt data-reveal>
+{%- comment -%} Usage: {% render 'product-card', product: product %}  (shop look: cream, brown, pink) {%- endcomment -%}
+<article class="card" data-reveal>
   <a href="{{ product.url }}" class="card__media" aria-label="{{ product.title | escape }}">
     {%- if product.featured_image -%}
       <img class="card__img" src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.featured_image.alt | default: product.title | escape }}" loading="lazy" width="400" height="500">
@@ -16,17 +16,27 @@
   <div class="card__body">
     <h3 class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
     <span class="price">
-      {%- if product.compare_at_price > product.price -%}<s>{{ product.compare_at_price | money }}</s> {% endif -%}
-      {{ product.price | money }}
+      {%- if product.compare_at_price > product.price -%}<s>₹{{ product.compare_at_price | divided_by: 100 | floor }}</s> {% endif -%}
+      ₹{{ product.price | divided_by: 100 | floor }}
     </span>
   </div>
+
+  {%- comment -%} little colour dots, if the product has a Colour option {%- endcomment -%}
+  {%- for option in product.options_with_values -%}
+    {%- assign oname = option.name | downcase -%}
+    {%- if oname == 'colour' or oname == 'color' -%}
+      <div class="card__dots" aria-label="{{ option.values.size }} colours">
+        {%- for value in option.values limit: 5 -%}
+          <i class="swatch-dot" data-name="{{ value | handleize }}" title="{{ value | escape }}" {% if value.swatch.color %}style="--sw:{{ value.swatch.color }}"{% endif %}></i>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
 
   {%- if product.available and product.variants.size == 1 -%}
     <form class="card__add" action="{{ routes.cart_add_url }}" method="post" data-add-to-cart>
       <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-      <button class="btn btn--sm" type="submit">add to bag</button>
+      <button class="btn-brown btn-sm" type="submit">Add to cart</button>
     </form>
-  {%- elsif product.available -%}
-    <a class="btn btn--sm card__add" href="{{ product.url }}">choose options</a>
   {%- endif -%}
 </article>

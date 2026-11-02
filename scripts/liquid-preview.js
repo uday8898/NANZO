@@ -155,7 +155,7 @@ export function createRenderer({ assetUrl, store = false }) {
           'main-menu': linklist([['Shop', '/collections/all'], ['Lookbook', '/#lookbook'], ['About', '/pages/about']]),
           footer: linklist([['Shipping', '/pages/shipping'], ['Returns', '/pages/returns'], ['Contact', '/pages/contact']]),
         },
-        collections: (() => { const c = { title: 'All pieces', handle: 'all', url: '/collections/all', products: PRODUCTS, products_count: PRODUCTS.length, all_products_count: PRODUCTS.length, sort_by: 'manual' }; return { all: c, 'after-hours': process.env.NZ_EMPTY_DROP ? null : { ...c, title: 'After Hours', handle: 'after-hours' } } })(),
+        collections: (() => { const c = { title: 'All pieces', handle: 'all', url: '/collections/all', products: PRODUCTS, products_count: PRODUCTS.length, all_products_count: PRODUCTS.length, sort_by: 'manual', default_sort_by: 'manual', description: '<p>Eight pieces for the part of the day that starts when everything else stops.</p>', sort_options: [{ name: 'Featured', value: 'manual' }, { name: 'Price, low to high', value: 'price-ascending' }, { name: 'Price, high to low', value: 'price-descending' }, { name: 'Newest', value: 'created-descending' }] }; return { all: c, 'after-hours': process.env.NZ_EMPTY_DROP ? null : { ...c, title: 'After Hours', handle: 'after-hours' } } })(),
         cart: cartJson(), customer: null, content_for_header: '', canonical_url: 'http://localhost:5173/', page_description: '',
       }
     }

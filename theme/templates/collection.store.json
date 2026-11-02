@@ -1,4 +1,7 @@
 {
-  "sections": { "main": { "type": "main-collection", "settings": {} } },
-  "order": ["main"]
+  "sections": {
+    "main": { "type": "main-collection", "settings": {} },
+    "ribbon": { "type": "ribbon", "settings": {} }
+  },
+  "order": ["main", "ribbon"]
 }
