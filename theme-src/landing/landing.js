@@ -1,4 +1,5 @@
 import './landing.css'
+import { flyToBag } from '../fly.js'
 
 /* ------------------------------------------------------------------------------------------------
    nanzo "After Hours" landing page.
@@ -173,17 +174,40 @@ function variantFor(p, size) {
   return list.find((v) => v.available) || null
 }
 
-/* ---------- cart (real Shopify cart) ---------- */
+/* ---------- bag: the real Shopify cart, or a demo bag until products exist ---------- */
+const demo = []
+const demoCart = () => {
+  const items = demo.map((d) => ({ ...d, final_line_price: d.price * d.quantity }))
+  return { items, item_count: items.reduce((n, i) => n + i.quantity, 0), total_price: items.reduce((n, i) => n + i.final_line_price, 0), currency: 'INR' }
+}
+const jsonPost = (url, body) => fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body) })
 const cart = {
-  async get() { const r = await fetch('/cart.js', { headers: { Accept: 'application/json' } }); return r.json() },
-  async add(items) {
-    const r = await fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items }) })
+  async get() {
+    if (!live) return demoCart()
+    const r = await fetch('/cart.js', { headers: { Accept: 'application/json' } })
+    return r.json()
+  },
+  // lines: [{ id, quantity, meta:{ key,title,size,price,image,url } }]
+  async add(lines) {
+    if (!live) {
+      lines.forEach(({ quantity = 1, meta }) => {
+        const hit = demo.find((d) => d.key === meta.key)
+        if (hit) hit.quantity += quantity
+        else demo.push({ key: meta.key, product_title: meta.title, variant_title: meta.size || '', price: Math.round(meta.price * 100), quantity, image: meta.image || '', url: meta.url || '' })
+      })
+      return {}
+    }
+    const r = await jsonPost('/cart/add.js', { items: lines.map(({ id, quantity = 1 }) => ({ id, quantity })) })
     if (!r.ok) throw new Error((await r.json().catch(() => ({}))).description || 'Could not add that to your bag')
     return r.json()
   },
   async change(line, quantity) {
-    const r = await fetch('/cart/change.js', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ line, quantity }) })
-    return r.json()
+    if (!live) {
+      const d = demo[line - 1]
+      if (d) { if (quantity <= 0) demo.splice(line - 1, 1); else d.quantity = quantity }
+      return demoCart()
+    }
+    return (await jsonPost('/cart/change.js', { line, quantity })).json()
   },
 }
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
@@ -192,23 +216,29 @@ function paintCart(c) {
   $('#bagn').textContent = c.item_count
   $('#cdt').textContent = inr(c.total_price / 100)
   const list = $('#cdi')
-  $('#cdc').style.display = c.items.length ? '' : 'none'
+  const cta = $('#cdc')
+  cta.style.display = c.items.length ? '' : 'none'
+  cta.href = live ? '/checkout' : '#'
   if (!c.items.length) { list.innerHTML = '<p class="em p">Your bag is empty.</p>'; return }
-  list.innerHTML = c.items.map((it, i) => `
+  list.innerHTML = c.items.map((it, i) => {
+    const title = it.url ? `<a href="${esc(it.url)}">${esc(it.product_title)}</a>` : esc(it.product_title)
+    return `
     <div class="ln">
       <div class="th" style="${it.image ? `background-image:url(${esc(it.image)})` : ''}"></div>
-      <div><b>${esc(it.product_title)}</b>${it.variant_title && it.variant_title !== 'Default Title' ? `<small>${esc(it.variant_title)}</small>` : ''}
+      <div><b>${title}</b>${it.variant_title && it.variant_title !== 'Default Title' ? `<small>${esc(it.variant_title)}</small>` : ''}
         <div class="qt"><button type="button" data-q="${i + 1}:${it.quantity - 1}" aria-label="Fewer">−</button><span>${it.quantity}</span><button type="button" data-q="${i + 1}:${it.quantity + 1}" aria-label="More">+</button></div></div>
       <b>${inr((it.final_line_price ?? it.line_price) / 100)}</b>
-    </div>`).join('')
+    </div>`
+  }).join('')
 }
-const refreshCart = async () => { try { paintCart(await cart.get()) } catch { /* offline / preview */ } }
+const refreshCart = async () => { try { paintCart(await cart.get()) } catch { /* offline */ } }
 function openDrawer(o) {
   drawer.classList.toggle('on', o)
   drawer.setAttribute('aria-hidden', String(!o))
   if (o) refreshCart()
 }
 $('#bag').addEventListener('click', () => openDrawer(true))
+$('#cdc').addEventListener('click', (e) => { if (!live) { e.preventDefault(); toast('Preview bag: checkout switches on once your products are in Shopify') } })
 drawer.addEventListener('click', async (e) => {
   if (e.target.closest('[data-close]')) return openDrawer(false)
   const q = e.target.closest('[data-q]')
@@ -240,16 +270,20 @@ $('#r5').addEventListener('click', () => { wallet -= 5; paintWallet(); toast('50
 $('#r7').addEventListener('click', () => { wallet -= 7; paintWallet(); toast('One free piece, coming up') })
 paintWallet()
 
-async function addToBag(items, label) {
-  if (!live) return toast('Preview: add products to the "After Hours" collection to switch ordering on')
+// lines: [{ id, quantity, meta, fly:{ rect|from, image, background, radius } }]. The product flies to the bag, then the count updates.
+let demoToldOnce = false
+async function addToBag(lines, label) {
+  if (!lines.length) return toast('Nothing to add yet')
   try {
-    await cart.add(items)
-    earn()
-    refreshCart()
-    toast(`${label} added. +1 Nanzo currency`)
+    await cart.add(lines)
   } catch (err) {
-    toast(err.message)
+    return toast(err.message)
   }
+  earn()
+  if (!live && !demoToldOnce) { demoToldOnce = true; toast(`${label} added to a preview bag. Add products to the "After Hours" collection for real orders`) }
+  else toast(`${label} added. +1 Nanzo currency`)
+  const bagBtn = $('#bag')
+  Promise.all(lines.map((l, i) => flyToBag({ ...l.fly, to: bagBtn, delay: i * 120, size: l.fly?.size || 72 }))).then(refreshCart)
 }
 
 /* ---------- the drop grid + quick view ---------- */
@@ -270,6 +304,18 @@ qvEl.setAttribute('role', 'dialog'); qvEl.setAttribute('aria-modal', 'true'); qv
 document.body.appendChild(qvEl)
 let qvFrom = null
 function closeQuickView() { qvEl.classList.remove('on'); qvFrom?.focus(); qvFrom = null }
+const ARCH = '999px 999px 10px 10px'
+// one bag line for a piece in a size, with its flight description
+function lineFor(p, size, fromRect, size2) {
+  const v = p.variants ? variantFor(p, size) : null
+  if (live && !v) return null
+  return {
+    id: v?.id,
+    quantity: 1,
+    meta: { key: `${p.title}|${size || ''}`, title: p.title, size, price: p.price, image: p.image, url: p.url },
+    fly: { fromRect, image: p.image, background: p.grad, radius: ARCH, size: size2 },
+  }
+}
 function quickView(p, from) {
   let pick = p.sizes.length === 1 ? p.sizes[0] : ''
   qvFrom = from
@@ -281,29 +327,31 @@ function quickView(p, from) {
       const out = p.variants && !variantFor(p, s)
       return `<button type="button" ${out ? 'disabled aria-label="' + esc(s) + ' sold out"' : ''} class="${s === pick ? 'on' : ''}">${esc(s)}</button>`
     }).join('')}</div>` : '<div class="sz"></div>'}
-    <button class="atc" type="button">Add to cart</button></div></div>`
+    <button class="atc" type="button">Add to cart</button>
+    ${p.url ? `<a class="vd" href="${esc(p.url)}">View full details &rarr;</a>` : ''}</div></div>`
   qvEl.classList.add('on')
   const btns = $$('.sz button', qvEl)
   btns.forEach((b) => b.addEventListener('click', () => { pick = b.textContent; btns.forEach((x) => x.classList.toggle('on', x === b)) }))
   $('.qx', qvEl).addEventListener('click', closeQuickView)
   $('.qx', qvEl).focus()
-  $('.atc', qvEl).addEventListener('click', () => {
+  $('.atc', qvEl).addEventListener('click', (e) => {
     if (p.sizes.length && !pick) return toast('Choose a size first')
-    const v = variantFor(p, pick)
-    if (live && !v) return toast('That size is sold out')
-    addToBag(live ? [{ id: v.id, quantity: 1 }] : [], `${p.title}${pick ? ` (${pick})` : ''}`)
+    const line = lineFor(p, pick, e.currentTarget.getBoundingClientRect(), 84)
+    if (!line) return toast('That size is sold out')
+    addToBag([line], `${p.title}${pick ? ` (${pick})` : ''}`)
     closeQuickView()
   })
 }
 qvEl.addEventListener('click', (e) => { if (e.target === qvEl) closeQuickView() })
 
-$('#all').addEventListener('click', () => {
+$('#all').addEventListener('click', (e) => {
   // sizes aren't asked for here, so each piece goes in as M, or its single/first available option
-  const items = pieces.map((p) => {
-    const v = variantFor(p, p.sizes.includes('M') ? 'M' : p.sizes[0]) || p.variants?.find((x) => x.available)
-    return v ? { id: v.id, quantity: 1 } : null
+  const rect = e.currentTarget.getBoundingClientRect()
+  const lines = pieces.map((p) => {
+    const size = p.sizes.includes('M') ? 'M' : p.sizes[0]
+    return lineFor(p, size, rect, 60) || (live ? lineFor(p, p.variants.find((x) => x.available)?.options[p.sizeIdx], rect, 60) : null)
   }).filter(Boolean)
-  addToBag(items, 'The whole drop')
+  addToBag(lines, 'The whole drop')
 })
 
 /* ---------- statement, marquee, world rows ---------- */
@@ -362,50 +410,235 @@ addEventListener('load', () => { layDrop(); measureDoc(); requestFrame() })
 layDrop(); measureDoc(); requestFrame()
 if (typeof ResizeObserver !== 'undefined') new ResizeObserver(measureDoc).observe(document.body)
 
-/* ---------- get ready: the playful wardrobe ---------- */
+/* ---------- get ready: the styling game ----------
+   Pick an occasion, then pick pieces from the two wardrobes. Each one flies into your look; the match bar
+   scores the look for the occasion; finish an outfit + shoes + bag to complete it. Then add the look to the bag. */
 const scene = $('#sc'), wardrobe = $('img', scene)
-const HOT = [['Sage ruffle romper', 72, 262, 215, 448], ['Lace camisole', 200, 262, 292, 402], ['Rose tiered dress', 265, 262, 398, 497], ['Denim jacket', 376, 247, 455, 470], ['Ivory mary janes', 95, 483, 172, 556], ['Sage block heels', 176, 488, 268, 553], ['Quilted rose bag', 340, 500, 438, 555], ['Ivory halter', 872, 245, 968, 430], ['Crimson corset dress', 950, 292, 1065, 484], ['Cherub top', 1060, 255, 1135, 350], ['Cherub maxi skirt', 1037, 358, 1150, 636], ['Sequin wrap', 1110, 262, 1275, 472], ['Crimson heels', 1150, 520, 1250, 583]]
-let chosen = null
-const lookCtx = $('#lc').getContext('2d')
-HOT.forEach(([name, x1, y1, x2, y2]) => {
+const OCC = ['Birthday', 'Bachelorette', 'Vacation', 'Date night']
+// [name, x1, y1, x2, y2 (px on the 1338x753 artwork), slot, match with each occasion (0..1)]
+const HOT = [
+  ['Sage ruffle romper', 72, 262, 215, 448, 'dress', [0.6, 0.4, 1, 0.5]],
+  ['Lace camisole', 200, 262, 292, 402, 'top', [0.5, 0.5, 0.7, 0.7]],
+  ['Rose tiered dress', 265, 262, 398, 497, 'dress', [1, 0.6, 0.7, 0.8]],
+  ['Denim jacket', 376, 247, 455, 470, 'outer', [0.4, 0.4, 0.8, 0.5]],
+  ['Ivory mary janes', 95, 483, 172, 556, 'shoes', [0.6, 0.3, 0.8, 0.7]],
+  ['Sage block heels', 176, 488, 268, 553, 'shoes', [0.7, 0.6, 0.6, 0.7]],
+  ['Quilted rose bag', 340, 500, 438, 555, 'bag', [0.8, 0.6, 0.7, 0.8]],
+  ['Ivory halter', 872, 245, 968, 430, 'top', [0.7, 0.8, 0.8, 0.8]],
+  ['Crimson corset dress', 950, 292, 1065, 484, 'dress', [0.8, 1, 0.3, 1]],
+  ['Cherub top', 1060, 255, 1135, 350, 'top', [0.7, 0.7, 0.6, 0.7]],
+  ['Cherub maxi skirt', 1037, 358, 1150, 636, 'bottom', [0.8, 0.6, 0.9, 0.8]],
+  ['Sequin wrap', 1110, 262, 1275, 472, 'top', [0.9, 1, 0.4, 0.8]],
+  ['Crimson heels', 1150, 520, 1250, 583, 'shoes', [0.8, 1, 0.2, 0.9]],
+].map(([name, x1, y1, x2, y2, slot, s]) => ({ name, x1, y1, x2, y2, slot, s }))
+const CELLS = [['top', 'Top / dress'], ['bottom', 'Bottom'], ['outer', 'Jacket'], ['shoes', 'Shoes'], ['bag', 'Bag']]
+const DEMO_PRICE = 4200
+
+let occ = 1
+let look = {} // slot -> piece ("dress" fills top + bottom)
+let styled = parseInt(store.get('nzl_styled') || '0', 10) || 0
+let wasComplete = false
+const hotBtns = new Map()
+
+/* a small cut-out of each piece from the artwork, used in the tray and as the flying thumbnail */
+const thumbs = new Map()
+function thumb(it) {
+  if (thumbs.has(it)) return thumbs.get(it)
+  const w = it.x2 - it.x1, h = it.y2 - it.y1
+  // 1) copy the piece out of the artwork at its native size
+  const raw = document.createElement('canvas'); raw.width = w; raw.height = h
+  const rg = raw.getContext('2d', { willReadFrequently: true })
+  try { rg.drawImage(wardrobe, it.x1, it.y1, w, h, 0, 0, w, h) } catch { return '' }
+  // 2) knock out the wardrobe back: flood-fill from the border through pixels close to the border colour
+  try {
+    const px = rg.getImageData(0, 0, w, h), d = px.data
+    let r = 0, gg = 0, b = 0, n = 0
+    const edge = (x, y) => { const i = (y * w + x) * 4; r += d[i]; gg += d[i + 1]; b += d[i + 2]; n++ }
+    for (let x = 0; x < w; x++) { edge(x, 0); edge(x, h - 1) }
+    for (let y = 0; y < h; y++) { edge(0, y); edge(w - 1, y) }
+    r /= n; gg /= n; b /= n
+    const TOL = 34 * 34, seen = new Uint8Array(w * h), q = []
+    const near = (p) => { const i = p * 4; return (d[i] - r) ** 2 + (d[i + 1] - gg) ** 2 + (d[i + 2] - b) ** 2 < TOL }
+    const seed = (x, y) => { const p = y * w + x; if (!seen[p] && near(p)) { seen[p] = 1; q.push(p) } }
+    for (let x = 0; x < w; x++) { seed(x, 0); seed(x, h - 1) }
+    for (let y = 0; y < h; y++) { seed(0, y); seed(w - 1, y) }
+    while (q.length) {
+      const p = q.pop(), x = p % w, y = (p / w) | 0
+      if (x > 0) seed(x - 1, y); if (x < w - 1) seed(x + 1, y); if (y > 0) seed(x, y - 1); if (y < h - 1) seed(x, y + 1)
+    }
+    for (let p = 0; p < w * h; p++) if (seen[p]) d[p * 4 + 3] = 0
+    rg.putImageData(px, 0, 0)
+  } catch { /* keep the plain crop */ }
+  // 3) centre it on a transparent tile, pixel-crisp
+  const c = document.createElement('canvas'); c.width = c.height = 120
+  const g = c.getContext('2d')
+  g.imageSmoothingEnabled = false
+  const s = Math.min(112 / w, 112 / h)
+  g.drawImage(raw, 0, 0, w, h, 60 - (w * s) / 2, 60 - (h * s) / 2, w * s, h * s)
+  const url = c.toDataURL('image/png')
+  thumbs.set(it, url)
+  return url
+}
+
+/* ---- UI scaffolding ---- */
+const gocc = $('#gocc'), tray = $('#tray')
+OCC.forEach((name, i) => {
+  const b = document.createElement('button')
+  b.type = 'button'; b.className = 'gm-chip'; b.textContent = name
+  b.addEventListener('click', () => { occ = i; render() })
+  gocc.appendChild(b)
+})
+const cells = CELLS.map(([slot, label]) => {
+  const el = document.createElement('div')
+  el.className = 'gm-cell'; el.dataset.slot = slot
+  tray.appendChild(el)
+  return { slot, label, el }
+})
+const slotItem = (slot) => (slot === 'top' ? look.dress || look.top : slot === 'bottom' ? (look.dress ? null : look.bottom) : look[slot])
+const worn = () => [...new Set(Object.values(look).filter(Boolean))]
+
+function score() {
+  const items = worn()
+  const outfit = !!look.dress || !!(look.top && look.bottom)
+  const missing = []
+  if (!outfit) missing.push(look.top ? 'a bottom' : look.bottom ? 'a top' : 'an outfit')
+  if (!look.shoes) missing.push('shoes')
+  if (!look.bag) missing.push('a bag')
+  const pct = items.length ? Math.round((items.reduce((n, i) => n + i.s[occ], 0) / items.length) * 100) : 0
+  return { items, pct, missing, complete: outfit && !!look.shoes && !!look.bag }
+}
+
+let placed = null
+function render() {
+  $$('.gm-chip', gocc).forEach((b, i) => { b.classList.toggle('on', i === occ); b.setAttribute('aria-pressed', String(i === occ)) })
+  cells.forEach(({ slot, label, el }) => {
+    const it = slotItem(slot)
+    const dressBottom = slot === 'bottom' && look.dress
+    el.classList.toggle('on', !!it)
+    el.classList.toggle('off', !!dressBottom)
+    el.innerHTML = `${it ? `<img alt="${esc(it.name)}" src="${thumb(it)}"${placed === it ? ' class="pop"' : ''}>` : ''}<small>${dressBottom ? 'Dress' : label}</small>`
+  })
+  hotBtns.forEach((b, it) => b.classList.toggle('worn', worn().includes(it)))
+
+  const s = score()
+  $('#gbar').style.width = `${s.pct}%`
+  $('#gpct').textContent = s.items.length ? `${s.pct}%` : ''
+  let msg
+  if (!s.items.length) msg = 'Pick pieces from the wardrobes.'
+  else if (!s.complete) msg = `Still missing: ${s.missing.join(', ')}.`
+  else if (s.pct >= 90) msg = 'Main character. Screenshot this look.'
+  else if (s.pct >= 75) msg = 'So cute. Swap one piece to hit 100%.'
+  else msg = `Hmm, not very ${OCC[occ].toLowerCase()}. Try a swap?`
+  $('#gmsg').textContent = msg
+  $('#gstars').textContent = s.complete ? (s.pct >= 90 ? '★★★' : s.pct >= 75 ? '★★☆' : '★☆☆') : ''
+  $('#gcount').textContent = `Looks styled: ${styled}`
+  $('#atc').disabled = !s.items.length
+
+  if (s.complete && !wasComplete) celebrate(s)
+  wasComplete = s.complete
+  placed = null
+}
+
+function say(text) {
+  const bub = $('#bub')
+  bub.textContent = text
+  bub.classList.add('on')
+  clearTimeout(bub.t); bub.t = setTimeout(() => bub.classList.remove('on'), 2600)
+}
+function sparkle(n, x = 50, y = 42) {
+  if (reduce) return
+  for (let i = 0; i < n; i++) {
+    const sp = document.createElement('span')
+    sp.className = 'sp'; sp.textContent = '✦'
+    const a = Math.random() * 6.28, d = 50 + Math.random() * 90
+    sp.style.cssText = `left:${x}%;top:${y}%;--x:${Math.cos(a) * d}px;--y:${Math.sin(a) * d}px;margin-left:${Math.random() * 40 - 20}px`
+    scene.appendChild(sp)
+    setTimeout(() => sp.remove(), 1200)
+  }
+  scene.classList.remove('bump'); void scene.offsetWidth; scene.classList.add('bump')
+}
+function celebrate(s) {
+  styled++
+  store.set('nzl_styled', String(styled))
+  say(s.pct >= 90 ? 'OBSESSED. Look complete!' : 'Look complete!')
+  sparkle(18)
+}
+
+/* ---- picking ---- */
+function toggle(it) {
+  const had = worn().includes(it)
+  if (had) Object.keys(look).forEach((k) => { if (look[k] === it) delete look[k] })
+  else if (it.slot === 'dress') { delete look.top; delete look.bottom; look.dress = it }
+  else { if (it.slot === 'top' || it.slot === 'bottom') delete look.dress; look[it.slot] = it }
+  return !had
+}
+const cellFor = (it) => cells.find((c) => c.slot === (it.slot === 'dress' ? 'top' : it.slot))?.el
+
+function pick(it, btn, delay = 0) {
+  const added = toggle(it)
+  if (!added) { render(); return say(`${it.name} goes back in the wardrobe.`) }
+  placed = it
+  const target = cellFor(it)
+  const done = flyToBag({ fromRect: btn.getBoundingClientRect(), to: target, image: thumb(it), radius: '10px', size: 54, delay })
+  // show the piece in its slot as it lands
+  done.then(render)
+  say(`Ooh. The ${it.name.toLowerCase()}.`)
+  sparkle(6, (((it.x1 + it.x2) / 2) / 1338) * 100, (((it.y1 + it.y2) / 2) / 753) * 100)
+}
+
+HOT.forEach((it) => {
   const b = document.createElement('button')
   b.type = 'button'
   b.className = 'hs'
-  b.style.cssText = `left:${x1 / 13.38}%;top:${y1 / 7.53}%;width:${(x2 - x1) / 13.38}%;height:${(y2 - y1) / 7.53}%`
-  b.setAttribute('aria-label', name)
-  b.innerHTML = `<span class="p">${name}</span>`
-  b.addEventListener('click', () => {
-    $$('.hs.on').forEach((x) => x.classList.remove('on'))
-    b.classList.add('on')
-    chosen = name
-    const w = x2 - x1, h = y2 - y1, s = Math.min(84 / w, 84 / h)
-    lookCtx.fillStyle = '#fff'; lookCtx.fillRect(0, 0, 96, 96)
-    lookCtx.imageSmoothingEnabled = false
-    try { lookCtx.drawImage(wardrobe, x1, y1, w, h, 48 - (w * s) / 2, 48 - (h * s) / 2, w * s, h * s) } catch { /* image not ready yet */ }
-    $('#ln2').textContent = name
-    const bub = $('#bub')
-    bub.textContent = `Ooh. The ${name.toLowerCase()}.`
-    bub.classList.add('on')
-    clearTimeout(bub.t); bub.t = setTimeout(() => bub.classList.remove('on'), 2400)
-    if (!reduce) for (let i = 0; i < 8; i++) {
-      const sp = document.createElement('span')
-      sp.className = 'sp'; sp.textContent = '✦'
-      const a = Math.random() * 6.28, d = 40 + Math.random() * 60
-      sp.style.cssText = `--x:${Math.cos(a) * d}px;--y:${Math.sin(a) * d}px;margin-left:${Math.random() * 40 - 20}px`
-      scene.appendChild(sp)
-      setTimeout(() => sp.remove(), 1200)
-    }
-  })
+  b.style.cssText = `left:${it.x1 / 13.38}%;top:${it.y1 / 7.53}%;width:${(it.x2 - it.x1) / 13.38}%;height:${(it.y2 - it.y1) / 7.53}%`
+  b.setAttribute('aria-label', `${it.name}, ${it.slot === 'dress' ? 'dress' : it.slot}`)
+  b.innerHTML = `<span class="p">${it.name}</span>`
+  b.addEventListener('click', () => pick(it, b))
+  hotBtns.set(it, b)
   scene.appendChild(b)
 })
-$('#atc').addEventListener('click', () => {
-  if (!chosen) return toast('Pick a piece from the wardrobes first')
-  // match the clicked outfit to a real product by name when possible
-  const hit = pieces.find((p) => p.variants && chosen.toLowerCase().includes(p.title.toLowerCase()))
-  if (hit) { const v = variantFor(hit, hit.sizes.includes('M') ? 'M' : hit.sizes[0]); if (v) return addToBag([{ id: v.id, quantity: 1 }], hit.title) }
-  toast(`${chosen} is in the drop. Pick it from After Hours above.`)
-  dropEl.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' })
+
+/* ---- actions ---- */
+const rnd = (a) => a[(Math.random() * a.length) | 0]
+const bySlot = (s) => HOT.filter((h) => h.slot === s)
+$('#gshuf').addEventListener('click', () => {
+  look = {}; wasComplete = false
+  const next = []
+  if (Math.random() < 0.5) next.push(rnd(bySlot('dress')))
+  else next.push(rnd(bySlot('top')), rnd(bySlot('bottom')))
+  if (Math.random() < 0.5) next.push(rnd(bySlot('outer')))
+  next.push(rnd(bySlot('shoes')), rnd(bySlot('bag')))
+  next.forEach((it, i) => {
+    if (it.slot === 'dress') { delete look.top; delete look.bottom; look.dress = it }
+    else { if (it.slot === 'top' || it.slot === 'bottom') delete look.dress; look[it.slot] = it }
+    flyToBag({ fromRect: hotBtns.get(it).getBoundingClientRect(), to: cellFor(it), image: thumb(it), radius: '10px', size: 50, delay: i * 140 }).then(() => { if (i === next.length - 1) render() })
+  })
+  say('Surprise! Does she like it?')
+  render()
 })
+$('#grst').addEventListener('click', () => { look = {}; wasComplete = false; render(); say('Fresh start. What are we wearing?') })
+
+$('#atc').addEventListener('click', () => {
+  const items = worn()
+  if (!items.length) return toast('Pick a piece from the wardrobes first')
+  const lines = [], missing = []
+  items.forEach((it) => {
+    const cell = cellFor(it)
+    const rect = cell.getBoundingClientRect()
+    // match each piece to a real product by name (e.g. a product titled "Rose tiered dress")
+    const hit = pieces.find((p) => p.variants && (p.title.toLowerCase().includes(it.name.toLowerCase()) || it.name.toLowerCase().includes(p.title.toLowerCase())))
+    if (hit) {
+      const l = lineFor(hit, hit.sizes.includes('M') ? 'M' : hit.sizes[0], rect, 58)
+      if (l) { l.fly.image = thumb(it) || l.fly.image; return lines.push(l) }
+    }
+    if (!live) {
+      lines.push({ id: undefined, quantity: 1, meta: { key: it.name, title: it.name, size: '', price: DEMO_PRICE, image: thumb(it), url: '' }, fly: { fromRect: rect, image: thumb(it), radius: '10px', size: 58 } })
+    } else missing.push(it.name)
+  })
+  if (lines.length) addToBag(lines, lines.length > 1 ? `Your look (${lines.length} pieces)` : lines[0].meta.title)
+  if (missing.length) toast(`Not in the shop yet: ${missing.join(', ')}`)
+})
+render()
 
 /* ---------- footer: shells that react to the cursor, hiding a ticket ---------- */
 {

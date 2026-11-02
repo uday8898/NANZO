@@ -1,4 +1,5 @@
 import { sfx } from './sound.js'
+import { flyToBag } from './fly.js'
 
 const FREE_SHIP = 199900 // paise: free-shipping threshold shown in the drawer progress bar
 
@@ -80,7 +81,12 @@ export function initCart() {
       const res = await fetch('/cart/add.js', { method: 'POST', body: new FormData(f), headers: { Accept: 'application/json' } })
       if (!res.ok) throw new Error((await res.json()).description || 'Could not add that one')
       sfx.cart()
-      render(await getCart())
+      const data = await getCart()
+      // the product flies from the button to the bag icon; the drawer opens when it lands
+      const bagBtn = document.querySelector('[data-cart-open]')
+      const img = f.closest('.card')?.querySelector('img')?.currentSrc || document.querySelector('.pdp__slide img')?.currentSrc || window.nz?.shell
+      await flyToBag({ from: e.submitter || btn || f, to: bagBtn, image: img, radius: '16px', size: 80 })
+      render(data)
       open()
     } catch (err) {
       if (errBox) errBox.textContent = err.message

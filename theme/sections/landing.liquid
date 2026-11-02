@@ -39,7 +39,7 @@
 <nav aria-label="Main">
   <a href="#top" aria-label="Nanzo" class="lg"></a>
   <span>
-    <a href="#drop">After Hours</a><a href="#currency">Currency</a><a href="#pack">Packaging</a><a href="#world">Our world</a>
+    <a href="#drop">After Hours</a><a href="{{ routes.all_products_collection_url }}">Shop all</a><a href="#currency">Currency</a><a href="#pack">Packaging</a><a href="#world">Our world</a>
     <button type="button" class="bagl" id="bag" aria-haspopup="dialog">Bag (<span id="bagn">0</span>)</button>
   </span>
 </nav>
@@ -99,7 +99,18 @@
     <img src="{{ 'landing-wardrobe.webp' | asset_url }}" width="1338" height="753" loading="lazy" alt="A pixel-art girl in a robe between two open wardrobes">
     <div id="bub" class="p" aria-live="polite"></div>
   </div>
-  <div class="look"><canvas id="lc" width="96" height="96" aria-hidden="true"></canvas><div class="p" id="ln2">Pick something from the wardrobes.</div><button class="atc" id="atc" type="button">Add to cart</button></div>
+  <div class="game" id="game">
+    <div class="gm-occ"><span class="p">Tonight's occasion</span><div id="gocc" role="group" aria-label="Occasion"></div></div>
+    <div class="gm-tray" id="tray" aria-label="Your look"></div>
+    <div class="gm-bar" aria-hidden="true"><i id="gbar"></i></div>
+    <div class="gm-row"><p id="gmsg" class="p" aria-live="polite"></p><span class="stars" id="gstars" aria-hidden="true"></span><b id="gpct"></b></div>
+    <div class="gm-actions">
+      <button type="button" id="gshuf">Surprise me</button>
+      <button type="button" id="grst">Start over</button>
+      <button class="atc" id="atc" type="button">Add look to cart</button>
+    </div>
+    <p class="gm-count" id="gcount"></p>
+  </div>
 </section>
 
 <section class="wd" id="world">
@@ -133,7 +144,7 @@
 <footer id="ft">
   <div style="position:relative">
     <h2 class="p">Nothing to wear? Not tonight.</h2>
-    <div class="fl"><a href="#drop">After Hours</a><a href="#currency">Currency</a><a href="#pack">Packaging</a><a href="#ready">Get ready</a><a href="#world">Our world</a><a href="{{ instagram }}" target="_blank" rel="noopener">Instagram</a><a href="/policies/shipping-policy">Shipping and returns</a></div>
+    <div class="fl"><a href="#drop">After Hours</a><a href="{{ routes.all_products_collection_url }}">Shop all</a><a href="#currency">Currency</a><a href="#pack">Packaging</a><a href="#ready">Get ready</a><a href="#world">Our world</a><a href="{{ instagram }}" target="_blank" rel="noopener">Instagram</a><a href="/policies/shipping-policy">Shipping and returns</a></div>
     <p class="hint">Run your hand through the shells. Someone left something.</p>
   </div>
   <div class="lg fo" role="img" aria-label="Nanzo"></div>
