@@ -202,28 +202,7 @@ body:not(.template-index) .sheet{background:transparent;border-radius:0}
 .ftr__fine{opacity:.5!important;font-size:14px}
 @media (max-width:720px){.ftr__cols{grid-template-columns:1fr}}
 
-/* ---- product page ---- */
-.pdp__grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,4vw,64px);align-items:start}
-.pdp__gallery{display:grid;gap:18px}
-.pdp__media{border-radius:32px;overflow:hidden;border:2px solid var(--cocoa);box-shadow:0 8px 0 var(--cocoa);background:var(--pink-2);aspect-ratio:4/5}
-.pdp__media img,.pdp__media video,.pdp__media model-viewer{width:100%;height:100%;object-fit:cover}
-.pdp__media--ph{display:grid;place-items:center}.pdp__media--ph .lg{width:46%;aspect-ratio:1;--c:var(--cream)}
-.pdp__info{position:sticky;top:110px;display:grid;gap:18px;background:var(--cream);border:2px solid var(--cocoa);border-radius:32px;padding:clamp(22px,3vw,40px);box-shadow:0 8px 0 var(--cocoa)}
-.pdp__form{display:grid;gap:18px}
-.opt{border:0;margin:0;padding:0}.opt legend{font-weight:600;margin-bottom:10px}
-.opt__row{display:flex;flex-wrap:wrap;gap:8px}
-.opt__pill{position:relative;cursor:pointer}
-.opt__pill input{position:absolute;opacity:0;inset:0}
-.opt__pill span{display:block;min-width:52px;text-align:center;padding:10px 18px;border:2px solid var(--cocoa);border-radius:99px;font-weight:600;background:var(--cream);transition:.15s}
-.opt__pill input:checked + span{background:var(--cocoa);color:var(--cream);transform:translateY(-2px);box-shadow:0 4px 0 var(--hot)}
-.opt__pill input:focus-visible + span{outline:3px solid var(--hot);outline-offset:3px}
-.pdp__note{color:#b0214a;font-weight:600;min-height:0}
-.pdp__ship{background:var(--mint);border-radius:18px;padding:12px 16px;font-weight:500}
-.acc{border-top:2px dashed rgba(72,52,50,.25);padding:14px 0}
-.acc summary{font-family:var(--display);font-size:20px;list-style:none;display:flex;justify-content:space-between;cursor:pointer}
-.acc summary::after{content:'+';font-size:26px;line-height:1}.acc[open] summary::after{content:'−'}
 .rte{margin-top:12px}.rte p,.rte ul{margin:0 0 12px}.rte--lg{font-size:1.15rem}
-@media (max-width:900px){.pdp__grid{grid-template-columns:1fr}.pdp__info{position:static}}
 
 /* ---- cart drawer + cart page ---- */
 .drawer{position:fixed;inset:0;z-index:150;pointer-events:none}

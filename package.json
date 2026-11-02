@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:store": "node -e \"process.env.NZ_STORE=1;import('vite').then(async v=>{const s=await v.createServer();await s.listen();s.printUrls()})\"",
     "build": "vite build",
+    "launch:check": "node scripts/push-launch.mjs --check-only",
+    "launch:push": "node scripts/push-launch.mjs",
     "build:preview": "vite build && node scripts/build-preview.js",
     "shopify:dev": "shopify theme dev --path theme",
     "shopify:push": "npm run build && shopify theme push --path theme"

@@ -1,21 +1,13 @@
-<div class="announce" role="region" aria-label="Announcement">
-  <div class="announce__track">
-    {%- for i in (1..2) -%}
-      <div class="announce__row" {% if i == 2 %}aria-hidden="true"{% endif %}>
-        {%- for n in (1..6) -%}
-          <span>{{ section.settings.text }}</span>
-          <i class="lg" style="--src:url('{{ 'shell.png' | asset_url }}')"></i>
-        {%- endfor -%}
-      </div>
-    {%- endfor -%}
-  </div>
+<div class="bar" role="region" aria-label="Announcement">
+  <p>{{ section.settings.text_1 }}{% if section.settings.text_2 != blank %} <span class="bar__sep" aria-hidden="true">|</span> {{ section.settings.text_2 }}{% endif %}</p>
 </div>
 
 {% schema %}
 {
   "name": "Announcement bar",
   "settings": [
-    { "type": "text", "id": "text", "label": "Text", "default": "free shipping over ₹1999 ♡ drop 001 · 25 nov" }
+    { "type": "text", "id": "text_1", "label": "Text 1", "default": "Free shipping over ₹3000" },
+    { "type": "text", "id": "text_2", "label": "Text 2", "default": "Tried, tested and loved by 100,000+ girlies all over India", "info": "Only keep a claim like this if it is true for nanzo." }
   ]
 }
 {% endschema %}

@@ -1,7 +1,7 @@
 {
   "sections": {
     "main": { "type": "main-product", "settings": {} },
-    "newsletter": { "type": "newsletter", "settings": {} }
+    "ribbon": { "type": "ribbon", "settings": {} }
   },
-  "order": ["main", "newsletter"]
+  "order": ["main", "ribbon"]
 }

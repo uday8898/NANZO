@@ -1,72 +1,256 @@
-{%- assign current = product.selected_or_first_available_variant -%}
-<section class="sheet page-top pdp" data-product>
-  <div class="wrap pdp__grid">
-    <div class="pdp__gallery">
-      {%- for media in product.media -%}
-        <div class="pdp__media" data-reveal>
-          {%- case media.media_type -%}
-            {%- when 'image' -%}
-              <img src="{{ media.preview_image | image_url: width: 1400 }}" alt="{{ media.alt | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" width="700" height="875">
-            {%- when 'model' -%}
-              {{ media | model_viewer_tag: image_size: '1400x', toggleable: true }}
-            {%- else -%}
-              {{ media | media_tag: image_size: '1400x' }}
-          {%- endcase -%}
-        </div>
-      {%- else -%}
-        <div class="pdp__media pdp__media--ph"><span class="lg" style="--src:url('{{ 'shell.png' | asset_url }}')"></span></div>
-      {%- endfor -%}
+{%- liquid
+  assign current = product.selected_or_first_available_variant
+  assign mf = product.metafields.custom
+  assign rating = product.metafields.reviews.rating.value
+  assign rating_count = product.metafields.reviews.rating_count.value
+  assign occasions = mf.occasions.value
+  assign details = mf.details.value
+  assign off = 0
+  if current.compare_at_price > current.price
+    assign off = current.compare_at_price | minus: current.price | times: 100 | divided_by: current.compare_at_price | floor
+  endif
+-%}
+
+<section class="pdp" data-product>
+  <div class="pdp__wrap">
+
+    {%- comment -%} ───────── gallery (thumbs + swipeable stage) ───────── {%- endcomment -%}
+    <div class="pdp__gallery" data-gallery>
+      <div class="pdp__thumbs" data-thumbs aria-label="Product images">
+        {%- for media in product.media -%}
+          <button type="button" class="pdp__thumb{% if forloop.first %} is-active{% endif %}" data-thumb="{{ media.id }}" aria-label="Show image {{ forloop.index }}">
+            <img src="{{ media.preview_image | image_url: width: 300 }}" alt="" loading="lazy" width="150" height="188">
+          </button>
+        {%- else -%}
+          {%- for i in (1..4) -%}<span class="pdp__thumb pdp__thumb--ph{% if forloop.first %} is-active{% endif %}"></span>{%- endfor -%}
+        {%- endfor -%}
+      </div>
+
+      <div class="pdp__stage" data-stage>
+        {%- for media in product.media -%}
+          <div class="pdp__slide" data-slide="{{ media.id }}">
+            {%- case media.media_type -%}
+              {%- when 'image' -%}
+                <img src="{{ media.preview_image | image_url: width: 1400 }}" alt="{{ media.alt | default: product.title | escape }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" width="700" height="875">
+              {%- when 'model' -%}
+                {{ media | model_viewer_tag: image_size: '1400x', toggleable: true }}
+              {%- else -%}
+                {{ media | media_tag: image_size: '1400x' }}
+            {%- endcase -%}
+          </div>
+        {%- else -%}
+          <div class="pdp__slide pdp__slide--ph"></div>
+        {%- endfor -%}
+      </div>
     </div>
 
+    {%- comment -%} ───────── info ───────── {%- endcomment -%}
     <div class="pdp__info">
-      <span class="eyebrow">{{ product.vendor }}</span>
-      <h1 class="h-lg">{{ product.title }}</h1>
-      <p class="price price--lg" data-price>
-        {%- if current.compare_at_price > current.price -%}<s>{{ current.compare_at_price | money }}</s> {% endif -%}
-        {{ current.price | money }}
-      </p>
+      {%- if mf.badge.value != blank -%}
+        <span class="pdp__badge"><i class="lg" style="--src:url('{{ 'shell.png' | asset_url }}')"></i>{{ mf.badge.value }}</span>
+      {%- endif -%}
 
-      {%- form 'product', product, class: 'pdp__form', data-add-to-cart: 'true' -%}
+      <h1 class="pdp__title">{{ product.title }}</h1>
+      {%- if mf.tagline.value != blank -%}<p class="pdp__tagline">{{ mf.tagline.value }}</p>{%- endif -%}
+
+      {%- if rating_count != blank and rating != blank -%}
+        <div class="pdp__rating" aria-label="Rated {{ rating.rating }} out of {{ rating.scale_max }}">
+          <span class="stars" aria-hidden="true">
+            {%- for i in (1..5) -%}
+              {%- assign diff = rating.rating | minus: forloop.index0 -%}
+              {%- if diff >= 1 -%}{%- assign fill = 100 -%}{%- elsif diff <= 0 -%}{%- assign fill = 0 -%}{%- else -%}{%- assign fill = diff | times: 100 -%}{%- endif -%}
+              <i class="star" style="--fill:{{ fill }}%;--src:url('{{ 'shell.png' | asset_url }}')"></i>
+            {%- endfor -%}
+          </span>
+          <span class="pdp__reviews">({{ rating_count }} reviews)</span>
+        </div>
+      {%- endif -%}
+
+      <div class="pdp__desc rte">{{ product.description }}</div>
+
+      {%- form 'product', product, id: 'pdp-form', class: 'pdp__form' -%}
         <input type="hidden" name="id" value="{{ current.id }}" data-variant-id>
 
-        {%- unless product.has_only_default_variant -%}
-          {%- for option in product.options_with_values -%}
+        {%- for option in product.options_with_values -%}
+          {%- assign oname = option.name | downcase -%}
+          {%- assign oidx = forloop.index0 -%}
+
+          {%- if oname == 'colour' or oname == 'color' -%}
+            <fieldset class="opt opt--colour">
+              <legend>COLOUR</legend>
+              <div class="swatches">
+                {%- for value in option.values -%}
+                  <label class="swatch" data-name="{{ value | handleize }}" title="{{ value | escape }}" {% if value.swatch.color %}style="--sw:{{ value.swatch.color }}"{% endif %}>
+                    <input type="radio" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" data-option-index="{{ oidx }}" data-kind="colour" {% if option.selected_value == value %}checked{% endif %}>
+                    <span class="swatch__ball"></span>
+                    <span class="sr">{{ value }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+
+          {%- elsif oname == 'size' -%}
+            <fieldset class="opt opt--size">
+              <div class="opt__head">
+                <legend>SIZE</legend>
+                {%- if section.settings.size_chart_page != blank -%}
+                  <button type="button" class="sizechart" data-size-chart>
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 14-14 4 4L7 21z"/><path d="m7 13 2 2m1-5 2 2m1-5 2 2"/></svg>
+                    <span>size chart</span>
+                  </button>
+                {%- endif -%}
+              </div>
+              <div class="sizes">
+                {%- for value in option.values -%}
+                  <label class="size">
+                    <input type="radio" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" data-option-index="{{ oidx }}" data-kind="size" {% if option.selected_value == value %}checked{% endif %}>
+                    <span class="size__shell" style="--src:url('{{ 'shell.png' | asset_url }}')"></span>
+                    <span class="size__text">{{ value }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+
+          {%- else -%}
             <fieldset class="opt">
-              <legend>{{ option.name }}</legend>
+              <legend>{{ option.name | upcase }}</legend>
               <div class="opt__row">
                 {%- for value in option.values -%}
                   <label class="opt__pill">
-                    <input type="radio" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" data-option-index="{{ forloop.parentloop.index0 }}" {% if option.selected_value == value %}checked{% endif %}>
+                    <input type="radio" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" data-option-index="{{ oidx }}" {% if option.selected_value == value %}checked{% endif %}>
                     <span>{{ value }}</span>
                   </label>
                 {%- endfor -%}
               </div>
             </fieldset>
-          {%- endfor -%}
-        {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
 
-        <button class="btn btn--block btn--lg" type="submit" data-atc {% unless current.available %}disabled{% endunless %}>
-          {%- if current.available -%}add to bag ✧{%- else -%}sold out{%- endif -%}
-        </button>
-        <p class="pdp__note" data-atc-error role="alert"></p>
+        <p class="pdp__error" data-atc-error role="alert"></p>
       {%- endform -%}
 
-      <p class="pdp__ship">{{ settings.shipping_note }}</p>
+      {%- if occasions != blank -%}
+        <div class="occ" data-occ>
+          <p class="occ__title">She's wearing it to...</p>
+          <div class="occ__pills">
+            {%- for o in occasions -%}
+              <button type="button" class="occ__pill{% if forloop.first %} is-active{% endif %}" data-copy="{{ o.copy | escape }}" data-match="{{ o.match | default: 100 }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">{{ o.label }}</button>
+            {%- endfor -%}
+          </div>
+          <div class="occ__bar" aria-hidden="true"><i data-occ-fill style="width:{{ occasions[0].match | default: 100 }}%"></i></div>
+          <div class="occ__row">
+            <p data-occ-copy>{{ occasions[0].copy }}</p>
+            <b>Occasion Match <span data-occ-match>{{ occasions[0].match | default: 100 }}%</span></b>
+          </div>
+        </div>
+      {%- endif -%}
 
-      <details class="acc" open>
-        <summary>the details</summary>
-        <div class="rte">{{ product.description }}</div>
-      </details>
-      <details class="acc">
-        <summary>shipping & returns</summary>
-        <div class="rte"><p>Orders ship within 2–3 working days via Shiprocket, with tracking sent to your email. Easy 7-day returns on unworn pieces.</p></div>
-      </details>
+      {%- comment -%} accordions: only one open at a time (details[name]) {%- endcomment -%}
+      <div class="accs">
+        <details class="acc" name="pdp-acc">
+          <summary>
+            <span class="acc__ic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 9h6M9 13h6"/></svg></span>
+            <span class="acc__label">Details</span><span class="acc__chev" style="--src:url('{{ 'shell.png' | asset_url }}')"></span>
+          </summary>
+          <div class="acc__body">
+            {%- if details != blank -%}
+              <dl class="specs">{%- for pair in details -%}<dt>{{ pair[0] }}</dt><dd>{{ pair[1] }}</dd>{%- endfor -%}</dl>
+            {%- else -%}
+              <div class="rte">{{ product.description }}</div>
+            {%- endif -%}
+          </div>
+        </details>
+
+        {%- if mf.styling.value != blank -%}
+          <details class="acc" name="pdp-acc">
+            <summary>
+              <span class="acc__ic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M12 3c.6 4.4 2.6 6.4 7 7-4.4.6-6.4 2.6-7 7-.6-4.4-2.6-6.4-7-7 4.4-.6 6.4-2.6 7-7z"/></svg></span>
+              <span class="acc__label">Styling</span><span class="acc__chev" style="--src:url('{{ 'shell.png' | asset_url }}')"></span>
+            </summary>
+            <div class="acc__body"><div class="rte">{{ mf.styling.value | newline_to_br }}</div></div>
+          </details>
+        {%- endif -%}
+
+        {%- if mf.care.value != blank -%}
+          <details class="acc" name="pdp-acc">
+            <summary>
+              <span class="acc__ic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8l8-4 8 4-2 3-2-1v10H8V10l-2 1z"/></svg></span>
+              <span class="acc__label">Care guide</span><span class="acc__chev" style="--src:url('{{ 'shell.png' | asset_url }}')"></span>
+            </summary>
+            <div class="acc__body"><div class="rte">{{ mf.care.value | newline_to_br }}</div></div>
+          </details>
+        {%- endif -%}
+
+        <details class="acc" name="pdp-acc">
+          <summary>
+            <span class="acc__ic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h12v9H2zM14 9h4l3 3v3h-7"/><circle cx="6.5" cy="17" r="1.8"/><circle cx="17.5" cy="17" r="1.8"/></svg></span>
+            <span class="acc__label">Shipping &amp; delivery</span><span class="acc__chev" style="--src:url('{{ 'shell.png' | asset_url }}')"></span>
+          </summary>
+          <div class="acc__body"><div class="rte">{{ section.settings.shipping_text }}</div></div>
+        </details>
+
+        {%- if mf.manufacturing.value != blank -%}
+          <details class="acc" name="pdp-acc">
+            <summary>
+              <span class="acc__ic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+              <span class="acc__label">Manufacturing details</span><span class="acc__chev" style="--src:url('{{ 'shell.png' | asset_url }}')"></span>
+            </summary>
+            <div class="acc__body"><div class="rte">{{ mf.manufacturing.value | newline_to_br }}</div></div>
+          </details>
+        {%- endif -%}
+      </div>
+
+      <form class="pin" data-pin-form novalidate>
+        <label class="pin__label" for="pin-in">Check delivery</label>
+        <div class="pin__row">
+          <input id="pin-in" type="text" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit pincode" autocomplete="postal-code" aria-describedby="pin-msg">
+          <button type="submit" class="btn-brown">Check</button>
+        </div>
+        <p class="pin__msg" id="pin-msg" data-pin-msg role="status"></p>
+      </form>
     </div>
   </div>
+
+  {%- comment -%} ───────── sticky buy bar ───────── {%- endcomment -%}
+  <div class="buybar" data-buybar>
+    <div class="buybar__inner">
+      <div class="buybar__prod">
+        <span class="buybar__thumb">
+          {%- if product.featured_image -%}<img src="{{ product.featured_image | image_url: width: 200 }}" alt="" width="48" height="48">{%- endif -%}
+        </span>
+        <div>
+          <b class="buybar__name">{{ product.title }}</b>
+          <div class="buybar__price">
+            <span class="buybar__now" data-bar-price>₹{{ current.price | divided_by: 100 | floor }}</span>
+            <s class="buybar__was" data-bar-was {% unless off > 0 %}hidden{% endunless %}>₹{{ current.compare_at_price | divided_by: 100 | floor }}</s>
+            <span class="buybar__off" data-bar-off {% unless off > 0 %}hidden{% endunless %}>{{ off }}% off</span>
+          </div>
+        </div>
+      </div>
+      <div class="buybar__cta">
+        <button class="btn-brown" type="submit" form="pdp-form" data-atc {% unless current.available %}disabled{% endunless %}>{% if current.available %}Add to cart{% else %}Sold out{% endif %}</button>
+        <button class="btn-pink" type="button" data-buy-now {% unless current.available %}disabled{% endunless %}>Buy Now</button>
+      </div>
+    </div>
+  </div>
+
+  {%- if section.settings.size_chart_page != blank -%}
+    <dialog class="modal" data-size-modal aria-label="Size chart">
+      <button type="button" class="modal__close" data-modal-close aria-label="Close">✕</button>
+      <h2>{{ section.settings.size_chart_page.title }}</h2>
+      <div class="rte">{{ section.settings.size_chart_page.content }}</div>
+    </dialog>
+  {%- endif -%}
 
   <script type="application/json" data-product-json>{{ product | json }}</script>
 </section>
 
 {% schema %}
-{ "name": "Product page", "settings": [] }
+{
+  "name": "Product page",
+  "settings": [
+    { "type": "page", "id": "size_chart_page", "label": "Size chart page", "info": "Create a Page with your size table (Online Store → Pages) and pick it here. The size chart link only shows when this is set." },
+    { "type": "richtext", "id": "shipping_text", "label": "Shipping & delivery text", "default": "<p>Orders ship within 2–3 working days with tracking sent to your email and phone.</p><p>Edit this text to match your shipping and returns policy.</p>" }
+  ]
+}
 {% endschema %}

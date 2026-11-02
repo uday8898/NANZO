@@ -17,6 +17,13 @@
     ]
   },
   {
+    "name": "Delivery check",
+    "settings": [
+      { "type": "text", "id": "pincode_api_url", "label": "Pincode API URL", "info": "Optional. A server endpoint that takes ?pin=XXXXXX and returns {\"ok\":true,\"message\":\"...\"} (e.g. a Shiprocket lookup). Leave empty to show the fallback text below for any valid pincode." },
+      { "type": "text", "id": "delivery_fallback_text", "label": "Fallback delivery message", "default": "We deliver here. Orders usually arrive in 3–7 working days." }
+    ]
+  },
+  {
     "name": "Social",
     "settings": [
       { "type": "url", "id": "social_instagram", "label": "Instagram" },

@@ -1,0 +1,19 @@
+{%- comment -%} Wavy pink ribbon with text riding along the curve (built by theme-src/ribbon.js) {%- endcomment -%}
+<section class="ribbon" data-ribbon data-text="{{ section.settings.text | escape }}" data-brand="{{ section.settings.brand | escape }}" data-shell="{{ 'shell.png' | asset_url }}" aria-hidden="true">
+  <div class="ribbon__stage" data-ribbon-stage>
+    <svg class="ribbon__band" width="1920" height="260" viewBox="0 0 1920 260" aria-hidden="true">
+      <path data-ribbon-path d="M-160 70 C 120 160, 420 200, 760 140 S 1300 20, 1600 80 S 1900 170, 2100 110" fill="none" stroke="currentColor" stroke-width="76"/>
+    </svg>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Wavy ribbon",
+  "settings": [
+    { "type": "text", "id": "text", "label": "Text", "default": "made for your best nights" },
+    { "type": "text", "id": "brand", "label": "Second word", "default": "nanzo" }
+  ],
+  "presets": [{ "name": "Wavy ribbon" }]
+}
+{% endschema %}

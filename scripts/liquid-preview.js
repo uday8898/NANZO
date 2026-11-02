@@ -17,21 +17,47 @@ const defaults = (list = []) =>
   Object.fromEntries(list.filter((s) => s.id).map((s) => [s.id, s.default ?? (s.type === 'checkbox' ? false : '')]))
 
 const money = (c) => '₹' + (Number(c || 0) / 100).toLocaleString('en-IN')
-const mkProduct = (i, title, price, opts) => ({
-  id: 100 + i, handle: title.toLowerCase().replace(/\W+/g, '-'), title, url: `/products/${title.toLowerCase().replace(/\W+/g, '-')}`,
-  price, compare_at_price: i % 3 === 0 ? price + 50000 : 0, available: i !== 4, vendor: 'nanzo', featured_image: null, images: [], media: [],
-  description: '<p>Soft, dreamy and made to be loved. Relaxed fit, pearl-finish details and a sea-glass shimmer.</p><ul><li>100% organic cotton</li><li>Relaxed, cropped fit</li><li>Wash cold, hang dry</li></ul>',
-  options_with_values: opts, variants: [{ id: 1000 + i, title: 'S', price, available: true, options: ['S'] }, { id: 2000 + i, title: 'M', price, available: true, options: ['M'] }],
-  selected_or_first_available_variant: { id: 1000 + i, price, available: true, compare_at_price: 0 },
-})
-const SIZES = [{ name: 'Size', selected_value: 'S', values: ['S', 'M', 'L'] }]
+const COLOURS = ['Blush', 'White', 'Cocoa', 'Olive']
+const SIZE_LIST = ['XS', 'S', 'M', 'L', 'XL']
+const mkProduct = (i, title, price) => {
+  const handle = title.toLowerCase().replace(/W+/g, '-')
+  const variants = []
+  COLOURS.forEach((c, ci) => SIZE_LIST.forEach((sz, si) => variants.push({
+    id: 1000 * (i + 1) + ci * 10 + si, title: c + ' / ' + sz, price, compare_at_price: i % 2 === 0 ? price + 80000 : 0,
+    available: sz !== 'XL', options: [c, sz], featured_media: null,
+  })))
+  return {
+    id: 100 + i, handle, title, url: '/products/' + handle, price, compare_at_price: i % 2 === 0 ? price + 80000 : 0, available: true, vendor: 'nanzo',
+    featured_image: null, images: [], media: [], has_only_default_variant: false,
+    description: '<p>A sequin-scale disco dress for the nights you will want photos of. Plunge halter neck, open back with a tie-up and a soft satin lining.</p>',
+    options: ['Colour', 'Size'],
+    options_with_values: [{ name: 'Colour', selected_value: 'Blush', values: COLOURS }, { name: 'Size', selected_value: 'S', values: SIZE_LIST }],
+    variants, selected_or_first_available_variant: variants[1],
+    metafields: {
+      custom: {
+        badge: { value: 'Limited Edition Drop, made for birthdays' },
+        tagline: { value: "for the nights you'll want photos of" },
+        occasions: { value: [
+          { label: 'Birthday', copy: 'Own the room, blow out the candles, let the sequins catch every flash.', match: 96 },
+          { label: 'Bachelorette', copy: 'Add the heels, order the round of shots, let the sequins do the talking.', match: 100 },
+          { label: 'Vacation', copy: 'Sunset dinners, beach clubs and the late-night walk back.', match: 82 },
+          { label: 'Date night', copy: 'Quietly show-stopping from the first drink to the last dance.', match: 90 },
+        ] },
+        details: { value: { Colour: 'Blush', Material: 'Sequin-scale discs on soft mesh, satin lining', Fit: 'Body-skimming, true to size', Neckline: 'Plunge halter', Sleeves: 'Sleeveless, openback with tie-up', Length: 'Above the knee' } },
+        styling: { value: 'Strappy heels, a mini bag and a slicked-back bun. Keep the jewellery simple and let the scales shine.' },
+        care: { value: 'Hand wash cold, inside out. Do not wring. Dry flat in shade. Steam on low from the inside only.' },
+        manufacturing: { value: 'Designed in India and made in small batches by our partner studio in Jaipur.' },
+      },
+      reviews: { rating: { value: { rating: 4.5, scale_max: 5 } }, rating_count: { value: 212 } },
+    },
+  }
+}
 export const PRODUCTS = [
-  mkProduct(0, 'Pearl Baby Tee', 149900, SIZES), mkProduct(1, 'Seashell Cardigan', 349900, SIZES),
-  mkProduct(2, 'Cloud Pleated Skirt', 249900, SIZES), mkProduct(3, 'Mermaid Mesh Top', 199900, SIZES),
-  mkProduct(4, 'Coquette Bow Hoodie', 399900, SIZES), mkProduct(5, 'Sea Glass Cargo', 299900, SIZES),
-  mkProduct(6, 'Butter Knit Vest', 179900, SIZES), mkProduct(7, 'Pink Tide Mini Dress', 329900, SIZES),
+  mkProduct(0, 'Disco Scale Dress', 249000), mkProduct(1, 'Seashell Cardigan', 349900),
+  mkProduct(2, 'Cloud Pleated Skirt', 249900), mkProduct(3, 'Mermaid Mesh Top', 199900),
+  mkProduct(4, 'Coquette Bow Hoodie', 399900), mkProduct(5, 'Sea Glass Cargo', 299900),
+  mkProduct(6, 'Butter Knit Vest', 179900), mkProduct(7, 'Pink Tide Mini Dress', 329900),
 ]
-PRODUCTS.forEach((p) => { p.variants.forEach((v) => (v.options = [v.title])) })
 
 let CART = []
 const cartJson = () => {
@@ -44,7 +70,7 @@ const cartJson = () => {
 
 // Renders theme/ templates with mock data. `assetUrl` decides how {{ 'x' | asset_url }} resolves
 // (dev server vs. static export).
-export function createRenderer({ assetUrl }) {
+export function createRenderer({ assetUrl, store = false }) {
     const engine = new Liquid({ root: [path.join(ROOT, 'snippets')], partials: [path.join(ROOT, 'snippets')], extname: '.liquid', jsTruthy: false, strictFilters: false, strictVariables: false })
 
     // ---- Shopify filters
@@ -85,6 +111,7 @@ export function createRenderer({ assetUrl }) {
       parse(token, remain) {
         this.type = (token.args.match(/['"]([^'"]+)['"]/) || [])[1] || 'x'
         this.cls = (token.args.match(/class:\s*['"]([^'"]+)['"]/) || [])[1] || ''
+        this.fid = (token.args.match(/\bid:\s*['"]([^'"]+)['"]/) || [])[1] || ''
         this.tpls = []
         const stream = this.liquid.parser.parseStream(remain)
         stream.on('tag:endform', () => stream.stop()).on('template', (t) => this.tpls.push(t)).on('end', () => { throw new Error('form not closed') })
@@ -92,7 +119,7 @@ export function createRenderer({ assetUrl }) {
       },
       *render(ctx, emitter) {
         const isProduct = this.type === 'product'
-        emitter.write(`<form method="post" action="${isProduct ? '/cart/add' : '/preview/' + this.type}" class="${this.cls}" ${isProduct ? 'data-add-to-cart="true"' : ''}>`)
+        emitter.write(`<form method="post" action="${isProduct ? '/cart/add' : '/preview/' + this.type}" class="${this.cls}" ${this.fid ? `id="${this.fid}"` : ''} ${isProduct ? 'data-add-to-cart="true"' : ''}>`)
         ctx.push({ form: { errors: null, posted_successfully: false } })
         yield this.liquid.renderer.renderTemplates(this.tpls, ctx, emitter)
         ctx.pop()
@@ -164,7 +191,10 @@ export function createRenderer({ assetUrl }) {
       const pathname = url.split('?')[0]
       const hit = PAGES.find(([re]) => re.test(pathname))
       const name = hit ? hit[1] : '404'
-      const tpl = JSON.parse(read('templates', `${name}.json`))
+      // `?store=1` (or opts.store) renders the full-store templates (*.store.json) instead of coming-soon
+      const useStore = store || /[?&]store(=|&|$)/.test(url)
+      const tplFile = useStore && exists('templates', `${name}.store.json`) ? `${name}.store.json` : `${name}.json`
+      const tpl = JSON.parse(read('templates', tplFile))
       const handle = pathname.split('/').pop()
       const product = PRODUCTS.find((p) => p.handle === handle) || PRODUCTS[0]
       const scope = {
@@ -186,7 +216,7 @@ export function liquidPreview() {
   return {
     name: 'nanzo-liquid-preview',
     async configureServer(server) {
-      const { renderPage } = createRenderer({ assetUrl: devAssetUrl })
+      const { renderPage } = createRenderer({ assetUrl: devAssetUrl, store: process.env.NZ_STORE === '1' })
 
       server.watcher.add(path.join(ROOT, '**/*.liquid'))
       server.watcher.on('change', (f) => { if (f.endsWith('.liquid') || f.endsWith('.json')) server.ws.send({ type: 'full-reload' }) })

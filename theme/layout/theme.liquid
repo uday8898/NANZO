@@ -13,7 +13,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@500;700&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DynaPuff:wght@500;700&family=Fredoka:wght@400;500;600&family=Jost:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:wght@500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
 
     {{ content_for_header }}
 
@@ -25,17 +25,20 @@
         scene: {{ settings.scene_3d | json }},
         currency: {{ shop.currency | json }},
         locale: {{ request.locale.iso_code | json }},
-        shell: {{ 'shell.png' | asset_url | json }}
+        shell: {{ 'shell.png' | asset_url | json }},
+        pincodeApi: {{ settings.pincode_api_url | json }},
+        deliveryText: {{ settings.delivery_fallback_text | json }}
       };
       document.documentElement.classList.add('js');
     </script>
     <script src="{{ 'theme.js' | asset_url }}" type="module" defer></script>
   </head>
 
-  <body class="template-{{ template.name }}" data-template="{{ template.name }}">
+  <body class="theme-store template-{{ template.name }}" data-template="{{ template.name }}">
     <a class="skip" href="#main">{{ 'general.skip_to_content' | t }}</a>
 
-    {%- if settings.scene_3d -%}<canvas id="gl" aria-hidden="true"></canvas>{%- endif -%}
+    {%- comment -%} the 3D scene only runs on the home page; shop pages stay light and fast {%- endcomment -%}
+    {%- if settings.scene_3d and template.name == 'index' -%}<canvas id="gl" aria-hidden="true"></canvas>{%- endif -%}
     <div class="grain" aria-hidden="true"></div>
     <div class="cursor" data-cursor aria-hidden="true"></div>
 
