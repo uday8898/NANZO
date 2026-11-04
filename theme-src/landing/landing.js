@@ -415,9 +415,10 @@ if (typeof ResizeObserver !== 'undefined') new ResizeObserver(measureDoc).observ
 /* ---------- get ready: the styling game ----------
    Pick an occasion, then pick pieces from the two wardrobes. Each one flies into your look; the match bar
    scores the look for the occasion; finish an outfit + bag to complete it. Then add the look to the bag. */
-import { dollSVG, GARMENTS, SLUG, thumbURL } from './doll.js'
+import { dollSVG, GARMENTS, GEAR, SLUG, thumbURL } from './doll.js'
 import { buildScene } from './scene.js'
 const scene = $('#sc')
+try { Object.assign(GEAR, JSON.parse($('#nzl-gear').textContent)) } catch { /* sprites missing */ }
 const art = buildScene()
 scene.insertAdjacentHTML('afterbegin', art.svg)
 const OCC = ['Birthday', 'Bachelorette', 'Vacation', 'Date night']

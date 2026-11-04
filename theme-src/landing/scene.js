@@ -52,7 +52,7 @@ function wardrobe(wx, pieces, shelf, lower, side) {
   }
   // rail: hanging pieces
   const slotW = (W - 44) / pieces.length
-  pieces.forEach((slug, i) => { const h = hung(slug, wx + 22 + slotW * (i + 0.5), 244, slotW + 12); out.push(h.svg); boxes[slug] = h.box })
+  pieces.forEach((slug, i) => { const h = hung(slug, wx + 22 + slotW * (i + 0.5), 244, slotW - 2); out.push(h.svg); boxes[slug] = h.box })
   // lower shelf contents
   for (const s of lower) {
     if (s.slug) { const f = flat(s.slug, wx + s.x, 504 - 60 * 0.95, 0.95); out.push(f.svg); boxes[s.slug] = f.box }
