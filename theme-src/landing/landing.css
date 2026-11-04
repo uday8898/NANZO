@@ -229,7 +229,7 @@ noscript #gate{display:none}
 .gm-occ>.p{font-size:26px;margin-right:6px}#gocc{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .gm-chip{border:1px solid var(--ink);border-radius:99px;background:none;padding:8px 18px;font-size:16px;transition:background .25s,color .25s,transform .2s}
 .gm-chip:hover{transform:translateY(-2px)}.gm-chip.on{background:var(--ink);color:var(--cream)}
-.gm-tray{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(8px,1.4vw,16px);width:100%}
+.gm-tray{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(8px,1.4vw,16px);width:100%}
 .gm-cell{position:relative;aspect-ratio:3/4;border:1.5px dashed var(--wine);border-radius:999px 999px 18px 18px;background:rgba(255,250,240,.55);display:grid;place-items:center;overflow:hidden;transition:background .3s,opacity .3s}
 .gm-cell small{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:12px;letter-spacing:.07em;text-transform:uppercase;opacity:.6}
 .gm-cell img{width:78%;height:68%;object-fit:contain;image-rendering:pixelated;margin-bottom:14px}
