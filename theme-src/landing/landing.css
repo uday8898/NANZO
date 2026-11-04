@@ -275,3 +275,30 @@ footer{padding-top:var(--sp)}
 .all-link{display:inline-block;margin-top:10px;font-size:16px;text-underline-offset:4px}
 .dh2>div,.dh2>p{max-width:40ch}
 .dhr{display:grid;gap:4px;justify-items:start;max-width:38ch}.dhr p{margin:0}
+
+/* ---------- fitting mirror: the dress-up stage ---------- */
+.mirror{position:absolute;left:35.87%;top:14.6%;width:27.65%;height:85.4%;border-radius:999px 999px 14px 14px;overflow:hidden;background:linear-gradient(180deg,#fff4f6 0%,#ffe1ea 55%,#f9c9d8 100%);box-shadow:0 0 0 5px #fff,0 0 0 7px var(--wine),0 22px 50px rgba(120,40,70,.28);transition:background .6s}
+.mirror[data-occ="0"]{background:linear-gradient(180deg,#fffbe8,#ffe9b0 55%,#ffd1c4)}
+.mirror[data-occ="2"]{background:linear-gradient(180deg,#f2fff8,#cdf3e3 55%,#aee3d2)}
+.mirror[data-occ="3"]{background:linear-gradient(180deg,#fdeaf0,#e9b6c8 55%,#b3667f)}
+.mr-glow{position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 22%,rgba(255,255,255,.85),transparent 70%);pointer-events:none}
+.mr-floor{position:absolute;left:20%;right:20%;bottom:3.5%;height:3.5%;border-radius:50%;background:rgba(120,40,70,.18);filter:blur(5px)}
+.doll{position:absolute;left:13.5%;top:6.2%;width:73%;height:90.2%;image-rendering:pixelated}
+.doll img{position:absolute;image-rendering:pixelated;display:block}
+.doll>.ly{left:0;top:0;width:100%;height:100%}
+.doll>.ly:last-child{z-index:2}
+#gear{position:absolute;left:0;top:0;width:100%;height:100%;z-index:1;display:block}
+.dgear{position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;transform:translateY(-14px) scale(1.04);transition:opacity .3s,transform .45s cubic-bezier(.3,1.5,.5,1)}
+.dgear.in{opacity:1;transform:none}.dgear.out{opacity:0;transform:translateY(8px)}
+.doll.hop{animation:dhop .55s cubic-bezier(.3,1.6,.5,1)}@keyframes dhop{35%{transform:translateY(-10px) rotate(-1.2deg)}70%{transform:translateY(0) rotate(.8deg)}}
+.hs{z-index:3}
+
+/* wardrobe picker (clean pieces, works on any screen) */
+.gm-pick{display:flex;gap:12px;overflow-x:auto;width:100%;padding:6px 4px 14px;scroll-snap-type:x proximity;scrollbar-width:thin}
+.pc{flex:0 0 112px;scroll-snap-align:start;display:grid;gap:6px;justify-items:center;border:1.5px solid rgba(78,51,27,.18);border-radius:18px;background:#fff;padding:10px 8px 8px;transition:transform .2s,box-shadow .25s,border-color .25s}
+.pc img{width:84px;height:92px;object-fit:contain;image-rendering:pixelated}
+.pc small{font-size:12px;line-height:1.2;text-align:center;min-height:2.4em}
+.pc:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(78,51,27,.14)}
+.pc.worn{border-color:var(--wine);box-shadow:0 0 0 2px var(--rose),0 10px 22px rgba(244,168,191,.55);background:#fff5f8}
+@media(max-width:760px){.mirror{left:24%;width:52%;top:6%;height:94%}.pc{flex-basis:96px}}
+.dgear img{height:auto;max-width:none}

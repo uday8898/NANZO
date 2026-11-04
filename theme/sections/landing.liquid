@@ -97,9 +97,22 @@
   <h2 class="p">Get ready with nanzo</h2>
   <div class="scene" id="sc">
     <img src="{{ 'landing-wardrobe.webp' | asset_url }}" width="1338" height="753" loading="lazy" alt="A pixel-art girl in a robe between two open wardrobes">
+    <div class="mirror" id="mirror" data-occ="1" aria-label="Fitting mirror">
+      <div class="mr-glow"></div>
+      <div class="doll" id="doll">
+        <img class="ly" width="270" height="580" data-ly="slippers" src="{{ 'girl-slippers.png' | asset_url }}" alt="">
+        <img class="ly" width="270" height="580" src="{{ 'girl-back.png' | asset_url }}" alt="">
+        <img class="ly" width="270" height="580" src="{{ 'girl-front.png' | asset_url }}" alt="">
+        <span id="gear"></span>
+        <img class="ly" width="270" height="580" src="{{ 'girl-hair.png' | asset_url }}" alt="A pixel-art girl with curly hair">
+      </div>
+      <span class="mr-floor"></span>
+    </div>
     <div id="bub" class="p" aria-live="polite"></div>
   </div>
+  <script type="application/json" id="nzl-gear">{%- assign gear_list = 'romper,camisole,tiered,denim,maryjanes,blockheels,qbag,halter,corset,cherubtop,maxiskirt,sequin,crimsonheels' | split: ',' -%}{ {%- for s in gear_list -%}{%- assign f = 'g-' | append: s | append: '.png' -%}"{{ s }}":"{{ f | asset_url }}"{% unless forloop.last %},{% endunless %}{%- endfor -%} }</script>
   <div class="game" id="game">
+    <div class="gm-pick" id="gpick" role="group" aria-label="Wardrobe"></div>
     <div class="gm-occ"><span class="p">Tonight's occasion</span><div id="gocc" role="group" aria-label="Occasion"></div></div>
     <div class="gm-tray" id="tray" aria-label="Your look"></div>
     <div class="gm-bar" aria-hidden="true"><i id="gbar"></i></div>

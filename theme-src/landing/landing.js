@@ -442,45 +442,20 @@ let styled = parseInt(store.get('nzl_styled') || '0', 10) || 0
 let wasComplete = false
 const hotBtns = new Map()
 
-/* a small cut-out of each piece from the artwork, used in the tray and as the flying thumbnail */
-const thumbs = new Map()
-function thumb(it) {
-  if (thumbs.has(it)) return thumbs.get(it)
-  const w = it.x2 - it.x1, h = it.y2 - it.y1
-  // 1) copy the piece out of the artwork at its native size
-  const raw = document.createElement('canvas'); raw.width = w; raw.height = h
-  const rg = raw.getContext('2d', { willReadFrequently: true })
-  try { rg.drawImage(wardrobe, it.x1, it.y1, w, h, 0, 0, w, h) } catch { return '' }
-  // 2) knock out the wardrobe back: flood-fill from the border through pixels close to the border colour
-  try {
-    const px = rg.getImageData(0, 0, w, h), d = px.data
-    let r = 0, gg = 0, b = 0, n = 0
-    const edge = (x, y) => { const i = (y * w + x) * 4; r += d[i]; gg += d[i + 1]; b += d[i + 2]; n++ }
-    for (let x = 0; x < w; x++) { edge(x, 0); edge(x, h - 1) }
-    for (let y = 0; y < h; y++) { edge(0, y); edge(w - 1, y) }
-    r /= n; gg /= n; b /= n
-    const TOL = 34 * 34, seen = new Uint8Array(w * h), q = []
-    const near = (p) => { const i = p * 4; return (d[i] - r) ** 2 + (d[i + 1] - gg) ** 2 + (d[i + 2] - b) ** 2 < TOL }
-    const seed = (x, y) => { const p = y * w + x; if (!seen[p] && near(p)) { seen[p] = 1; q.push(p) } }
-    for (let x = 0; x < w; x++) { seed(x, 0); seed(x, h - 1) }
-    for (let y = 0; y < h; y++) { seed(0, y); seed(w - 1, y) }
-    while (q.length) {
-      const p = q.pop(), x = p % w, y = (p / w) | 0
-      if (x > 0) seed(x - 1, y); if (x < w - 1) seed(x + 1, y); if (y > 0) seed(x, y - 1); if (y < h - 1) seed(x, y + 1)
-    }
-    for (let p = 0; p < w * h; p++) if (seen[p]) d[p * 4 + 3] = 0
-    rg.putImageData(px, 0, 0)
-  } catch { /* keep the plain crop */ }
-  // 3) centre it on a transparent tile, pixel-crisp
-  const c = document.createElement('canvas'); c.width = c.height = 120
-  const g = c.getContext('2d')
-  g.imageSmoothingEnabled = false
-  const s = Math.min(112 / w, 112 / h)
-  g.drawImage(raw, 0, 0, w, h, 60 - (w * s) / 2, 60 - (h * s) / 2, w * s, h * s)
-  const url = c.toDataURL('image/png')
-  thumbs.set(it, url)
-  return url
+/* clean cut-outs of each piece (exported sprites), used in the tray, the picker and as the flying thumbnail */
+const GEAR = (() => { try { return JSON.parse($('#nzl-gear').textContent) } catch { return {} } })()
+const SLUG = { 'Sage ruffle romper': 'romper', 'Lace camisole': 'camisole', 'Rose tiered dress': 'tiered', 'Denim jacket': 'denim', 'Ivory mary janes': 'maryjanes', 'Sage block heels': 'blockheels', 'Quilted rose bag': 'qbag', 'Ivory halter': 'halter', 'Crimson corset dress': 'corset', 'Cherub top': 'cherubtop', 'Cherub maxi skirt': 'maxiskirt', 'Sequin wrap': 'sequin', 'Crimson heels': 'crimsonheels' }
+// where each sprite sits on the 270x580 doll: centre x, top y, scale; layer = stacking order
+const FIT = {
+  tiered: { ax: 140, ay: 160, s: 0.88, z: 2 }, romper: { ax: 140, ay: 160, s: 0.9, z: 2 }, corset: { ax: 140, ay: 168, s: 0.95, z: 2 },
+  camisole: { ax: 140, ay: 170, s: 1, z: 2 }, halter: { ax: 140, ay: 166, s: 0.8, z: 2 }, cherubtop: { ax: 140, ay: 176, s: 1, z: 2 }, sequin: { ax: 140, ay: 164, s: 0.8, z: 2 },
+  maxiskirt: { ax: 138, ay: 226, s: 1.1, z: 1 },
+  denim: { ay: 160, s: 1, z: 3, at: [[112, 0], [170, 1]] },
+  maryjanes: { ax: 141, ay: 500, s: 1.25, z: 4 }, crimsonheels: { ax: 141, ay: 498, s: 1.15, z: 4 }, blockheels: { ay: 497, s: 1, z: 4, at: [[116, 0], [166, 1]] },
+  qbag: { ax: 230, ay: 318, s: 0.9, z: 6 },
 }
+const GSIZE = {}
+const thumb = (it) => GEAR[SLUG[it.name]] || ''
 
 /* ---- UI scaffolding ---- */
 const gocc = $('#gocc'), tray = $('#tray')
@@ -521,6 +496,8 @@ function render() {
     el.innerHTML = `${it ? `<img alt="${esc(it.name)}" src="${thumb(it)}"${placed === it ? ' class="pop"' : ''}>` : ''}<small>${dressBottom ? 'Dress' : label}</small>`
   })
   hotBtns.forEach((b, it) => b.classList.toggle('worn', worn().includes(it)))
+  pickBtns.forEach((b, it) => { const on = worn().includes(it); b.classList.toggle('worn', on); b.setAttribute('aria-pressed', String(on)) })
+  dress()
 
   const s = score()
   $('#gbar').style.width = `${s.pct}%`
@@ -566,6 +543,50 @@ function celebrate(s) {
   sparkle(18)
 }
 
+/* ---- the fitting mirror: she wears whatever is in the look ---- */
+const doll = $('#doll'), gear = $('#gear'), mirror = $('#mirror')
+const slippers = $('[data-ly="slippers"]', doll)
+const dollLayers = new Map()
+function dollFor(it) {
+  const slug = SLUG[it.name], f = FIT[slug]
+  if (!f || !GEAR[slug]) return null
+  const at = f.at || [[f.ax, 0]]
+  const wrap = document.createElement('span')
+  wrap.className = 'dgear'; wrap.style.zIndex = f.z
+  at.forEach(([x, flip]) => {
+    const im = document.createElement('img')
+    im.src = GEAR[slug]; im.alt = ''
+    const apply = () => {
+      const w = im.naturalWidth * f.s
+      im.style.cssText = `left:${((x - w / 2) / 270) * 100}%;top:${(f.ay / 580) * 100}%;width:${(w / 270) * 100}%${flip ? ';transform:scaleX(-1)' : ''}`
+    }
+    if (im.complete && im.naturalWidth) apply(); else im.addEventListener('load', apply)
+    wrap.appendChild(im)
+  })
+  return wrap
+}
+function dress() {
+  const on = new Set(worn())
+  dollLayers.forEach((el, it) => { if (!on.has(it)) { el.classList.add('out'); setTimeout(() => el.remove(), 260); dollLayers.delete(it) } })
+  on.forEach((it) => { if (!dollLayers.has(it)) { const el = dollFor(it); if (el) { gear.appendChild(el); dollLayers.set(it, el); requestAnimationFrame(() => el.classList.add('in')) } } })
+  slippers.style.visibility = look.shoes ? 'hidden' : ''
+  mirror.dataset.occ = occ
+  if (on.size) { doll.classList.remove('hop'); void doll.offsetWidth; doll.classList.add('hop') }
+}
+
+/* ---- the wardrobe picker: clean pieces you can tap on any screen ---- */
+const gpick = $('#gpick')
+const pickBtns = new Map()
+HOT.forEach((it) => {
+  const b = document.createElement('button')
+  b.type = 'button'; b.className = 'pc'
+  b.innerHTML = `<img alt="" src="${thumb(it)}" loading="lazy"><small>${esc(it.name)}</small>`
+  b.setAttribute('aria-label', `${it.name}, ${it.slot === 'dress' ? 'dress' : it.slot}`)
+  b.addEventListener('click', () => pick(it, b))
+  pickBtns.set(it, b)
+  gpick.appendChild(b)
+})
+
 /* ---- picking ---- */
 function toggle(it) {
   const had = worn().includes(it)
@@ -581,7 +602,7 @@ function pick(it, btn, delay = 0) {
   if (!added) { render(); return say(`${it.name} goes back in the wardrobe.`) }
   placed = it
   const target = cellFor(it)
-  const done = flyToBag({ fromRect: btn.getBoundingClientRect(), to: target, image: thumb(it), radius: '10px', size: 54, delay })
+  const done = flyToBag({ fromRect: btn.getBoundingClientRect(), to: doll, image: thumb(it), radius: '10px', size: 58, delay })
   // show the piece in its slot as it lands
   done.then(render)
   say(`Ooh. The ${it.name.toLowerCase()}.`)
@@ -613,7 +634,7 @@ $('#gshuf').addEventListener('click', () => {
   next.forEach((it, i) => {
     if (it.slot === 'dress') { delete look.top; delete look.bottom; look.dress = it }
     else { if (it.slot === 'top' || it.slot === 'bottom') delete look.dress; look[it.slot] = it }
-    flyToBag({ fromRect: hotBtns.get(it).getBoundingClientRect(), to: cellFor(it), image: thumb(it), radius: '10px', size: 50, delay: i * 140 }).then(() => { if (i === next.length - 1) render() })
+    flyToBag({ fromRect: hotBtns.get(it).getBoundingClientRect(), to: doll, image: thumb(it), radius: '10px', size: 50, delay: i * 140 }).then(() => { if (i === next.length - 1) render() })
   })
   say('Surprise! Does she like it?')
   render()
