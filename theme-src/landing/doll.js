@@ -25,7 +25,7 @@ const DEFS = `<defs>
   <linearGradient id="shoe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbd0dc"/><stop offset="1" stop-color="#e58fa9"/></linearGradient>
   <linearGradient id="bra" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6f3"/><stop offset="1" stop-color="#f3d3d6"/></linearGradient>
   <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter>
-  <clipPath id="eyeL"><path d="M101 91 Q110 79 122 81 Q133 84 135 94 Q118 100 101 91Z"/></clipPath>
+  <clipPath id="eyeL"><path d="M104 92 Q112 83 123 84 Q132 86 134 93 Q119 98 104 92Z"/></clipPath>
 </defs>`
 
 const heel = `
@@ -35,18 +35,18 @@ const heel = `
   <path d="M109 537 Q122 535 136 537 L134 543 Q122 541 111 543Z" fill="#d97a98"/>
   <path d="M117 543 L123 543 L121 575 L119 575Z" fill="#d97a98"/><path d="M118 545 L119 573" stroke="#fff" stroke-opacity=".5" stroke-width="1"/>`
 
-const eye = `<g transform="translate(-5 1)">
-  <ellipse cx="117" cy="80" rx="17" ry="8" fill="url(#shdw)"/>
-  <path d="M101 91 Q110 79 122 81 Q133 84 135 94 Q118 100 101 91Z" fill="#fff"/>
-  <g clip-path="url(#eyeL)"><circle cx="119" cy="90" r="9.5" fill="url(#iris)"/><circle cx="119" cy="90" r="4.2" fill="#140803"/><circle cx="122.5" cy="86.5" r="2.6" fill="#fff"/><circle cx="115.5" cy="94" r="1.3" fill="#fff" opacity=".7"/><path d="M101 91 Q110 79 122 81 Q133 84 135 94 L135 70 L101 70Z" fill="#000" opacity=".12"/></g>
-  <path d="M100 91 Q110 78 122 80 Q133 83 136 94" stroke="#1d0f0a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-  <path d="M100 91 L92 85" stroke="#1d0f0a" stroke-width="2.8" stroke-linecap="round"/>
-  <path d="M103 87 L97 81 M108 83 L104 76 M115 81 L113 74 M123 81 L123 74" stroke="#1d0f0a" stroke-width="1.7" stroke-linecap="round"/>
-    <path d="M103 84 Q116 73 134 82" stroke="#b9786e" stroke-width="1.4" fill="none" opacity=".8"/>
-  <path d="M98 74 Q111 63 130 70" stroke="#3b1b10" stroke-width="2.4" fill="none" stroke-linecap="round"/></g>`
+const EYE = 'M104 92 Q112 83 123 84 Q132 86 134 93 Q119 98 104 92Z'
+const eye = `<g transform="translate(-4 0)">
+  <ellipse cx="118" cy="84" rx="16" ry="7" fill="url(#shdw)"/>
+  <path d="${EYE}" fill="#f6ecea"/>
+  <g clip-path="url(#eyeL)"><circle cx="121" cy="90" r="8.4" fill="url(#iris)"/><circle cx="121" cy="90" r="3.6" fill="#140803"/><circle cx="124" cy="87.4" r="2.3" fill="#fff"/><circle cx="117.5" cy="93" r="1.1" fill="#fff" opacity=".7"/><path d="${EYE}" fill="none"/><path d="M104 92 Q112 83 123 84 Q132 86 134 93 L134 70 L104 70Z" fill="#000" opacity=".18"/></g>
+  <path d="M103 92 Q112 82 123 83 Q133 85 135 93" stroke="#1d0f0a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M103 92 L96 88" stroke="#1d0f0a" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M105 88 L100 83 M110 85 L107 79 M116 83 L115 77" stroke="#1d0f0a" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M100 74 Q112 66 130 72" stroke="#4a2417" stroke-width="2" fill="none" stroke-linecap="round" opacity=".85"/></g>`
 
 export const DOLL_BACK = `
-  <g transform="translate(135 152) scale(.9) translate(-135 -152)">
+  <g transform="translate(135 152) scale(1) translate(-135 -152)">
   <path d="M76 92 C64 38 102 16 135 16 C168 16 206 38 194 92 C204 150 210 210 200 262 C190 280 166 274 156 262 L114 262 C104 274 80 280 70 262 C60 210 66 150 76 92Z" fill="url(#hg)"/>
   <path d="M84 60 C70 120 74 190 70 258 M186 60 C200 120 196 190 200 258" stroke="#b9774a" stroke-width="3" fill="none" opacity=".35" stroke-linecap="round"/></g>`
 
@@ -68,7 +68,7 @@ export const DOLL_BODY = `
   ${heel}${mirror(heel)}
   <g id="lb"><path d="M104 186 Q119 178 133 196 L137 196 Q151 178 166 186 C170 204 156 214 144 211 Q138 208 135 200 Q132 208 126 211 C114 214 100 204 104 186Z" fill="url(#bra)"/><path d="M104 186 Q119 178 133 196 M166 186 Q151 178 137 196" stroke="#efc4c9" stroke-width="2" fill="none"/></g>
   <g id="ls"><path d="M94 302 L176 302 L182 346 L137 346 L135 330 L133 346 L88 346Z" fill="url(#bra)"/><rect x="94" y="302" width="82" height="7" fill="#f3d3d6"/></g>
-  <g transform="translate(135 152) scale(.9) translate(-135 -152)">
+  <g transform="translate(135 152) scale(1) translate(-135 -152)">
   <path d="M91 88 C91 55 112 40 135 40 C158 40 179 55 179 88 C179 106 170 124 156 136 Q135 150 114 136 C100 124 91 106 91 88Z" fill="url(#fg)"/>
   <path d="M96 98 C100 118 110 132 124 140 M174 98 C170 118 160 132 146 140" stroke="#d99a76" stroke-width="2.6" fill="none" opacity=".45" stroke-linecap="round"/>
   <ellipse cx="108" cy="112" rx="12" ry="8" fill="url(#blush)"/><ellipse cx="162" cy="112" rx="12" ry="8" fill="url(#blush)"/>
@@ -82,14 +82,13 @@ export const DOLL_BODY = `
   <ellipse cx="135" cy="128" rx="6.5" ry="2.2" fill="#fff" opacity=".55"/><ellipse cx="131" cy="116" rx="2.6" ry="1" fill="#fff" opacity=".5"/>
   </g>`
 
-const lockL = `<path d="M96 70 C78 112 86 156 76 200 C70 232 82 254 76 276 C90 284 106 274 108 262 C116 232 100 206 106 172 C110 140 102 104 112 72Z" fill="url(#hg)"/><path d="M94 110 C88 150 96 190 86 238 M104 118 C100 160 106 200 98 250" stroke="#c0825a" stroke-width="2.4" fill="none" opacity=".45" stroke-linecap="round"/>`
+const lockL = `<g transform="translate(-10 6)"><path d="M96 70 C78 112 86 156 76 200 C70 232 82 254 76 276 C90 284 106 274 108 262 C116 232 100 206 106 172 C110 140 102 104 112 72Z" fill="url(#hg)"/><path d="M94 110 C88 150 96 190 86 238 M104 118 C100 160 106 200 98 250" stroke="#c0825a" stroke-width="2.4" fill="none" opacity=".45" stroke-linecap="round"/></g>`
 export const DOLL_HAIR = `
-  <g transform="translate(135 152) scale(.9) translate(-135 -152)">
+  <g transform="translate(135 152) scale(1) translate(-135 -152)">
   ${lockL}${mirror(lockL)}
   <path d="M88 82 C84 36 110 26 135 26 C160 26 186 36 182 82 L182 62 Q160 56 135 60 Q110 56 88 62Z" fill="url(#hg)"/>
-  <path d="M98 40 Q110 30 128 30 M160 32 Q172 36 176 48" stroke="#d09062" stroke-width="3" fill="none" opacity=".5" stroke-linecap="round"/>
-  <path d="M98 60 Q135 50 172 60" stroke="#2c1209" stroke-width="2" fill="none" opacity=".4"/>
-  <g transform="translate(176 76)"><path d="M0 -8 L6 0 L0 8 L-6 0Z" fill="#f9a9c6"/><path d="M0 -8 L0 8 M-6 0 L6 0" stroke="#fff" stroke-width="1" opacity=".8"/></g></g>`
+  <path d="M104 40 Q116 32 132 32" stroke="#d09062" stroke-width="3" fill="none" opacity=".5" stroke-linecap="round"/>
+    <g transform="translate(176 76)"><path d="M0 -8 L6 0 L0 8 L-6 0Z" fill="#f9a9c6"/><path d="M0 -8 L0 8 M-6 0 L6 0" stroke="#fff" stroke-width="1" opacity=".8"/></g></g>`
 
 /* ---------------- the garments ----------------
    The exact original designs, as smoothed sprites placed on the doll (native sprite size x scale, in doll units). */
