@@ -414,7 +414,8 @@ if (typeof ResizeObserver !== 'undefined') new ResizeObserver(measureDoc).observ
 
 /* ---------- get ready: the styling game ----------
    Pick an occasion, then pick pieces from the two wardrobes. Each one flies into your look; the match bar
-   scores the look for the occasion; finish an outfit + shoes + bag to complete it. Then add the look to the bag. */
+   scores the look for the occasion; finish an outfit + bag to complete it. Then add the look to the bag. */
+import { dollSVG, GARMENTS, SLUG, thumbURL } from './doll.js'
 const scene = $('#sc'), wardrobe = $('img', scene)
 const OCC = ['Birthday', 'Bachelorette', 'Vacation', 'Date night']
 // [name, x1, y1, x2, y2 (px on the 1338x753 artwork), slot, match with each occasion (0..1)]
@@ -423,17 +424,14 @@ const HOT = [
   ['Lace camisole', 200, 262, 292, 402, 'top', [0.5, 0.5, 0.7, 0.7]],
   ['Rose tiered dress', 265, 262, 398, 497, 'dress', [1, 0.6, 0.7, 0.8]],
   ['Denim jacket', 376, 247, 455, 470, 'outer', [0.4, 0.4, 0.8, 0.5]],
-  ['Ivory mary janes', 95, 483, 172, 556, 'shoes', [0.6, 0.3, 0.8, 0.7]],
-  ['Sage block heels', 176, 488, 268, 553, 'shoes', [0.7, 0.6, 0.6, 0.7]],
   ['Quilted rose bag', 340, 500, 438, 555, 'bag', [0.8, 0.6, 0.7, 0.8]],
   ['Ivory halter', 872, 245, 968, 430, 'top', [0.7, 0.8, 0.8, 0.8]],
   ['Crimson corset dress', 950, 292, 1065, 484, 'dress', [0.8, 1, 0.3, 1]],
   ['Cherub top', 1060, 255, 1135, 350, 'top', [0.7, 0.7, 0.6, 0.7]],
   ['Cherub maxi skirt', 1037, 358, 1150, 636, 'bottom', [0.8, 0.6, 0.9, 0.8]],
   ['Sequin wrap', 1110, 262, 1275, 472, 'top', [0.9, 1, 0.4, 0.8]],
-  ['Crimson heels', 1150, 520, 1250, 583, 'shoes', [0.8, 1, 0.2, 0.9]],
 ].map(([name, x1, y1, x2, y2, slot, s]) => ({ name, x1, y1, x2, y2, slot, s }))
-const CELLS = [['top', 'Top / dress'], ['bottom', 'Bottom'], ['outer', 'Jacket'], ['shoes', 'Shoes'], ['bag', 'Bag']]
+const CELLS = [['top', 'Top / dress'], ['bottom', 'Bottom'], ['outer', 'Jacket'], ['bag', 'Bag']]
 const DEMO_PRICE = 4200
 
 let occ = 1
@@ -442,20 +440,7 @@ let styled = parseInt(store.get('nzl_styled') || '0', 10) || 0
 let wasComplete = false
 const hotBtns = new Map()
 
-/* clean cut-outs of each piece (exported sprites), used in the tray, the picker and as the flying thumbnail */
-const GEAR = (() => { try { return JSON.parse($('#nzl-gear').textContent) } catch { return {} } })()
-const SLUG = { 'Sage ruffle romper': 'romper', 'Lace camisole': 'camisole', 'Rose tiered dress': 'tiered', 'Denim jacket': 'denim', 'Ivory mary janes': 'maryjanes', 'Sage block heels': 'blockheels', 'Quilted rose bag': 'qbag', 'Ivory halter': 'halter', 'Crimson corset dress': 'corset', 'Cherub top': 'cherubtop', 'Cherub maxi skirt': 'maxiskirt', 'Sequin wrap': 'sequin', 'Crimson heels': 'crimsonheels' }
-// where each sprite sits on the 270x580 doll: centre x, top y, scale; layer = stacking order
-const FIT = {
-  tiered: { ax: 140, ay: 160, s: 0.88, z: 2 }, romper: { ax: 140, ay: 160, s: 0.9, z: 2 }, corset: { ax: 140, ay: 168, s: 0.95, z: 2 },
-  camisole: { ax: 140, ay: 170, s: 1, z: 2 }, halter: { ax: 140, ay: 166, s: 0.8, z: 2 }, cherubtop: { ax: 140, ay: 176, s: 1, z: 2 }, sequin: { ax: 140, ay: 164, s: 0.8, z: 2 },
-  maxiskirt: { ax: 138, ay: 226, s: 1.1, z: 1 },
-  denim: { ay: 160, s: 1, z: 3, at: [[112, 0], [170, 1]] },
-  maryjanes: { ax: 141, ay: 500, s: 1.25, z: 4 }, crimsonheels: { ax: 141, ay: 498, s: 1.15, z: 4 }, blockheels: { ay: 497, s: 1, z: 4, at: [[116, 0], [166, 1]] },
-  qbag: { ax: 230, ay: 318, s: 0.9, z: 6 },
-}
-const GSIZE = {}
-const thumb = (it) => GEAR[SLUG[it.name]] || ''
+const thumb = (it) => thumbURL(SLUG[it.name])
 
 /* ---- UI scaffolding ---- */
 const gocc = $('#gocc'), tray = $('#tray')
@@ -479,10 +464,9 @@ function score() {
   const outfit = !!look.dress || !!(look.top && look.bottom)
   const missing = []
   if (!outfit) missing.push(look.top ? 'a bottom' : look.bottom ? 'a top' : 'an outfit')
-  if (!look.shoes) missing.push('shoes')
   if (!look.bag) missing.push('a bag')
   const pct = items.length ? Math.round((items.reduce((n, i) => n + i.s[occ], 0) / items.length) * 100) : 0
-  return { items, pct, missing, complete: outfit && !!look.shoes && !!look.bag }
+  return { items, pct, missing, complete: outfit && !!look.bag }
 }
 
 let placed = null
@@ -544,32 +528,26 @@ function celebrate(s) {
 }
 
 /* ---- the fitting mirror: she wears whatever is in the look ---- */
-const doll = $('#doll'), gear = $('#gear'), mirror = $('#mirror')
-const slippers = $('[data-ly="slippers"]', doll)
+const doll = $('#doll'), mirror = $('#mirror')
+doll.innerHTML = dollSVG()
+const gear = $('#gear', doll), lb = $('#lb', doll), ls = $('#ls', doll)
 const dollLayers = new Map()
-function dollFor(it) {
-  const slug = SLUG[it.name], f = FIT[slug]
-  if (!f || !GEAR[slug]) return null
-  const at = f.at || [[f.ax, 0]]
-  const wrap = document.createElement('span')
-  wrap.className = 'dgear'; wrap.style.zIndex = f.z
-  at.forEach(([x, flip]) => {
-    const im = document.createElement('img')
-    im.src = GEAR[slug]; im.alt = ''
-    const apply = () => {
-      const w = im.naturalWidth * f.s
-      im.style.cssText = `left:${((x - w / 2) / 270) * 100}%;top:${(f.ay / 580) * 100}%;width:${(w / 270) * 100}%${flip ? ';transform:scaleX(-1)' : ''}`
-    }
-    if (im.complete && im.naturalWidth) apply(); else im.addEventListener('load', apply)
-    wrap.appendChild(im)
-  })
-  return wrap
-}
 function dress() {
   const on = new Set(worn())
   dollLayers.forEach((el, it) => { if (!on.has(it)) { el.classList.add('out'); setTimeout(() => el.remove(), 260); dollLayers.delete(it) } })
-  on.forEach((it) => { if (!dollLayers.has(it)) { const el = dollFor(it); if (el) { gear.appendChild(el); dollLayers.set(it, el); requestAnimationFrame(() => el.classList.add('in')) } } })
-  slippers.style.visibility = look.shoes ? 'hidden' : ''
+  on.forEach((it) => {
+    if (dollLayers.has(it)) return
+    const g = GARMENTS[SLUG[it.name]]
+    if (!g) return
+    const el = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    el.setAttribute('class', 'dgear'); el.dataset.z = g.z; el.innerHTML = g.svg
+    gear.appendChild(el); dollLayers.set(it, el)
+    requestAnimationFrame(() => el.classList.add('in'))
+  })
+  ;[...gear.children].sort((a, b) => a.dataset.z - b.dataset.z).forEach((el) => gear.appendChild(el))
+  const covers = new Set([...on].flatMap((it) => GARMENTS[SLUG[it.name]]?.covers || []))
+  lb.style.display = covers.has('top') ? 'none' : ''
+  ls.style.display = covers.has('bottom') ? 'none' : ''
   mirror.dataset.occ = occ
   if (on.size) { doll.classList.remove('hop'); void doll.offsetWidth; doll.classList.add('hop') }
 }
@@ -630,7 +608,7 @@ $('#gshuf').addEventListener('click', () => {
   if (Math.random() < 0.5) next.push(rnd(bySlot('dress')))
   else next.push(rnd(bySlot('top')), rnd(bySlot('bottom')))
   if (Math.random() < 0.5) next.push(rnd(bySlot('outer')))
-  next.push(rnd(bySlot('shoes')), rnd(bySlot('bag')))
+  next.push(rnd(bySlot('bag')))
   next.forEach((it, i) => {
     if (it.slot === 'dress') { delete look.top; delete look.bottom; look.dress = it }
     else { if (it.slot === 'top' || it.slot === 'bottom') delete look.dress; look[it.slot] = it }
