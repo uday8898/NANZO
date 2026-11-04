@@ -1,14 +1,23 @@
 {%- paginate collection.products by section.settings.per_page -%}
 <section class="coll">
   <div class="coll__wrap">
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ routes.root_url }}">Home</a><span aria-hidden="true">/</span><span>{{ collection.title }}</span></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="{{ routes.root_url }}">Home</a><span aria-hidden="true">/</span><span>{% if collection.handle == 'all' %}Shop all{% else %}{{ collection.title }}{% endif %}</span></nav>
 
     <header class="coll__head">
-      <h1 class="coll__title">{{ collection.title }}</h1>
+      <h1 class="coll__title">{% if collection.handle == 'all' %}Shop all{% else %}{{ collection.title }}{% endif %}</h1>
       {%- if collection.description != blank -%}
         <p class="coll__tag">{{ collection.description | strip_html | truncate: 120 }}</p>
       {%- endif -%}
     </header>
+
+    {%- if collection.all_types.size > 1 -%}
+      <nav class="coll__types" aria-label="Filter by type">
+        <a class="chip{% if collection.current_type == blank %} is-on{% endif %}" href="{{ routes.all_products_collection_url }}">All</a>
+        {%- for type in collection.all_types -%}
+          <a class="chip{% if collection.current_type == type %} is-on{% endif %}" href="{{ type | url_for_type }}">{{ type }}</a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
 
     <div class="coll__bar">
       <span class="coll__count">{{ collection.products_count }} {% if collection.products_count == 1 %}piece{% else %}pieces{% endif %}</span>

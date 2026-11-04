@@ -47,14 +47,20 @@
 <header class="hero" id="top">
   <div class="fresco" aria-hidden="true"><i class="spark"></i></div>
   <div class="moon"></div>
-  <div class="arch a1 i0"></div><div class="arch a2 i5"></div>
   <div>
     <h1 class="lg" role="img" aria-label="Nanzo"></h1>
     <div class="sub p">After Hours</div>
     <p class="ln">The first drop. Clothes for the part of the day that starts when everything else stops.</p>
+    <a class="hero-cta" href="#drop">Shop the drop</a>
   </div>
 </header>
 <div class="mq p" aria-hidden="true"><div id="mq"></div></div>
+
+<section class="drop" id="drop"><div class="stk">
+  <div class="dh2"><h2 class="p">After Hours</h2><div class="dhr"><p>Drop 01. Eight pieces, each with its own packaging and a little something to keep. When they’re gone, they’re gone.</p><a class="all-link" href="{{ routes.all_products_collection_url }}">Shop all pieces &rarr;</a></div></div>
+  <div class="pg" id="pg"></div>
+  <div class="fb2" id="fb2"><span class="p">Wear the whole night.</span><button class="atc" id="all" type="button">Add all to cart</button></div>
+</div></section>
 
 <section class="st"><p class="p" id="stm">all that you deserve. and some more.</p></section>
 
@@ -70,12 +76,6 @@
 <section class="ms"><div class="bg i1"></div><div class="mt"><h2 class="p">No girl in front of a full wardrobe with nothing to wear for the moments that matter.</h2><p>We believe occasions deserve outfits with intention, not leftovers from an ordinary week.</p></div></section>
 <section class="pl"><h2 class="p">Three pillars</h2><div class="pls"><div style="--c:var(--powder)"><h3 class="p">Love over trend</h3><p>We only make what we’re in love with.</p></div><div style="--c:var(--rose)"><h3 class="p">Made for occasions</h3><p>Birthdays, bachelorettes, vacations, big nights. Not everyday wear.</p></div><div style="--c:var(--matcha)"><h3 class="p">Co-created</h3><p>Every piece is tried on, discussed and reworked with our community.</p></div></div></section>
 <section class="ch"><div><h2 class="p">If Nanzo were a person, she’d be</h2><ul><li><b>The friend who plans the party</b>Enthusiastic and dependable.</li><li><b>Opinionated about taste</b>No need to follow the crowd.</li><li><b>Inclusive</b>She asks for opinions and actually uses them.</li><li><b>Fun with substance</b>She cares about how things are made.</li></ul></div><div class="arch i3"></div></section>
-
-<section class="drop" id="drop"><div class="stk">
-  <div class="dh2"><h2 class="p">After Hours</h2><p>Drop 01. Eight pieces, each with its own packaging and a little something to keep. When they’re gone, they’re gone.</p></div>
-  <div class="pg" id="pg"></div>
-  <div class="fb2" id="fb2"><span class="p">Wear the whole night.</span><button class="atc" id="all" type="button">Add all to cart</button></div>
-</div></section>
 
 <section class="cu" id="currency">
   <div><div class="nt i6" role="img" aria-label="A Nanzo currency note"></div></div>
@@ -127,6 +127,7 @@
   <small>Updated every month with raw images from the collection, the brand and the packaging.</small>
 </section>
 
+{%- if section.settings.founder_name != blank -%}
 <section class="ab" id="about">
   {%- if section.settings.founder_photo != blank -%}
     <div class="arch" style="background:url('{{ section.settings.founder_photo | image_url: width: 1000 }}') center/cover"></div>
@@ -139,7 +140,7 @@
     <div class="rte">{{ section.settings.founder_story }}</div>
   </div>
 </section>
-<div class="cm" aria-hidden="true"><div class="arch"></div><div class="arch"></div><div class="arch"></div><div class="arch"></div><div class="arch"></div></div>
+{%- endif -%}
 
 <footer id="ft">
   <div style="position:relative">
@@ -157,7 +158,6 @@
   <header><p class="w">Movement one</p><h1 class="p">After Hours</h1><p>Drop 01, from the first sketch to the box on your doorstep.</p></header>
   <section><h2 class="p">Ideation</h2><div class="st4"><div><div class="arch" data-t="sketch" style="--g:linear-gradient(#D9E8E1,#FFFAF0)"></div><h3 class="p">Sketched</h3><p>Prints and silhouettes we’re in love with.</p></div><div><div class="arch" data-t="fitting" style="--g:linear-gradient(#FCB1C5,#FFE9EF)"></div><h3 class="p">Tried on</h3><p>On real girls, in real rooms.</p></div><div><div class="arch" data-t="notes" style="--g:linear-gradient(#D8CC7A,#FFFAF0)"></div><h3 class="p">Talked about</h3><p>Honest opinions, written down and used.</p></div><div><div class="arch" data-t="final" style="--g:linear-gradient(#8E8A43,#D8CC7A)"></div><h3 class="p">Reworked</h3><p>Changed until it was right.</p></div></div></section>
   <section class="wb"><h2 class="p">Packaging</h2><div class="st4 three"><div class="arch" data-t="outer box" style="--g:linear-gradient(#FCB1C5,#FFFAF0)"></div><div class="arch" data-t="tissue and tag" style="--g:linear-gradient(#D9E8E1,#FFE9EF)"></div><div class="arch" data-t="collectible" style="--g:linear-gradient(#D8CC7A,#FFFAF0)"></div></div></section>
-  <section><h2 class="p">Creators</h2><div class="cr"><div class="arch"></div><div class="arch"></div><div class="arch"></div><div class="arch"></div><div class="arch"></div></div><p class="cn">Creator portraits go here.</p></section>
   <section class="wb"><h2 class="p">Raw shoot</h2><div class="ra"><div class="i0"></div><div class="i4"></div><div class="i5"></div><div class="i1"></div><div class="i2"></div><div class="i3"></div></div></section>
   <footer class="wf"><h2 class="p">Wear the whole night.</h2><button class="atc" id="wd2" type="button">Back to the drop</button></footer>
 </div>
@@ -203,18 +203,18 @@
     { "type": "range", "id": "products_limit", "label": "Pieces to show", "min": 2, "max": 8, "step": 1, "default": 8 },
     { "type": "text", "id": "discount_code", "label": "Discount code on the footer ticket", "default": "AFTERHOURS10", "info": "Create this code in Shopify → Discounts, or it won't work at checkout." },
     { "type": "header", "content": "About" },
-    { "type": "text", "id": "founder_name", "label": "Founder name", "default": "[founder name]" },
-    { "type": "richtext", "id": "founder_story", "label": "Founder story", "default": "<p>[Add your story here: why Nanzo, why After Hours.]</p>" },
+    { "type": "text", "id": "founder_name", "label": "Founder name", "info": "Leave empty to hide the About section until you are ready." },
+    { "type": "richtext", "id": "founder_story", "label": "Founder story" },
     { "type": "image_picker", "id": "founder_photo", "label": "Founder portrait" },
     { "type": "header", "content": "Links" },
     { "type": "url", "id": "instagram_url", "label": "Instagram (falls back to theme settings)" },
     { "type": "header", "content": "Photos (optional, defaults are bundled)" },
-    { "type": "image_picker", "id": "photo_0", "label": "Sequins / heart section / hero arch" },
+    { "type": "image_picker", "id": "photo_0", "label": "Sequins / heart section / raw shoot" },
     { "type": "image_picker", "id": "photo_1", "label": "Wide mood image (full-bleed)" },
     { "type": "image_picker", "id": "photo_2", "label": "Raw shoot 3" },
     { "type": "image_picker", "id": "photo_3", "label": "Persona section / raw shoot 4" },
     { "type": "image_picker", "id": "photo_4", "label": "Raw shoot 2" },
-    { "type": "image_picker", "id": "photo_5", "label": "Hero arch (right)" },
+    { "type": "image_picker", "id": "photo_5", "label": "Raw shoot 1" },
     { "type": "image_picker", "id": "photo_6", "label": "Currency note" }
   ],
   "presets": [{ "name": "Landing page" }]

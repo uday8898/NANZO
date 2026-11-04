@@ -81,6 +81,7 @@ export function createRenderer({ assetUrl, store = false }) {
     engine.registerFilter('money_with_currency', (c) => money(c) + ' INR')
     engine.registerFilter('money_without_currency', (c) => (Number(c || 0) / 100).toFixed(2))
     engine.registerFilter('t', (v) => v)
+    engine.registerFilter('url_for_type', (t) => '/collections/types?q=' + encodeURIComponent(t))
     engine.registerFilter('handleize', (v) => String(v).toLowerCase().replace(/\W+/g, '-'))
     engine.registerFilter('stylesheet_tag', (u) => `<link rel="stylesheet" href="${u}">`)
     engine.registerFilter('media_tag', () => '')
@@ -155,7 +156,7 @@ export function createRenderer({ assetUrl, store = false }) {
           'main-menu': linklist([['Shop', '/collections/all'], ['Lookbook', '/#lookbook'], ['About', '/pages/about']]),
           footer: linklist([['Shipping', '/pages/shipping'], ['Returns', '/pages/returns'], ['Contact', '/pages/contact']]),
         },
-        collections: (() => { const c = { title: 'All pieces', handle: 'all', url: '/collections/all', products: PRODUCTS, products_count: PRODUCTS.length, all_products_count: PRODUCTS.length, sort_by: 'manual', default_sort_by: 'manual', description: '<p>Eight pieces for the part of the day that starts when everything else stops.</p>', sort_options: [{ name: 'Featured', value: 'manual' }, { name: 'Price, low to high', value: 'price-ascending' }, { name: 'Price, high to low', value: 'price-descending' }, { name: 'Newest', value: 'created-descending' }] }; return { all: c, 'after-hours': process.env.NZ_EMPTY_DROP ? null : { ...c, title: 'After Hours', handle: 'after-hours' } } })(),
+        collections: (() => { const c = { title: 'All pieces', handle: 'all', url: '/collections/all', products: PRODUCTS, products_count: PRODUCTS.length, all_products_count: PRODUCTS.length, sort_by: 'manual', default_sort_by: 'manual', all_types: ['Dress', 'Top', 'Skirt', 'Shoes', 'Bag'], current_type: '', description: '<p>Eight pieces for the part of the day that starts when everything else stops.</p>', sort_options: [{ name: 'Featured', value: 'manual' }, { name: 'Price, low to high', value: 'price-ascending' }, { name: 'Price, high to low', value: 'price-descending' }, { name: 'Newest', value: 'created-descending' }] }; return { all: c, 'after-hours': process.env.NZ_EMPTY_DROP ? null : { ...c, title: 'After Hours', handle: 'after-hours' } } })(),
         cart: cartJson(), customer: null, content_for_header: '', canonical_url: 'http://localhost:5173/', page_description: '',
       }
     }

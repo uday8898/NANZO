@@ -255,3 +255,23 @@ noscript #gate{display:none}
 /* quick view + bag: link through to the product page */
 .vd{display:inline-block;margin-top:14px;font-size:15px;text-underline-offset:4px}
 #cd .ln a{text-decoration:none;border-bottom:1px solid currentColor}
+
+/* ================= organisation pass: one spacing scale, readable nav, clearer hero ================= */
+:root{--sp:clamp(72px,10vw,150px)}
+nav{mix-blend-mode:normal;transition:background .35s,color .35s,box-shadow .35s;padding-bottom:calc(14px + 2px)}
+nav.solid{background:rgba(255,250,240,.9);color:var(--ink);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(41,39,37,.12)}
+nav a:hover,.bagl:hover{opacity:.7}
+.ht,.ch,.ab{padding-block:var(--sp)}
+.pl,.gr{padding-block:var(--sp)}
+.cu,.pk{padding-block:var(--sp)}
+.wd{padding-top:var(--sp);padding-bottom:var(--sp)}
+footer{padding-top:var(--sp)}
+/* hero: a clear next step now that the side photos are gone */
+.hero-cta{position:relative;display:inline-block;margin-top:28px;padding:15px 34px;border:1px solid var(--cream);border-radius:99px;color:var(--cream);text-decoration:none;font-size:17px;letter-spacing:.03em;transition:background .3s,color .3s}
+.hero-cta:hover{background:var(--cream);color:var(--wine)}
+/* placeholder pieces: a soft shell instead of the word "photo" */
+.pz .arch[data-t="photo"]::after,.qp .arch[data-t="photo"]::after{content:none}
+.pz .arch:not([style*="url("])::before,.qp .arch:not([style*="url("])::before{content:'';position:absolute;left:50%;top:46%;width:42%;aspect-ratio:1;transform:translate(-50%,-50%);background:rgba(255,250,240,.75);-webkit-mask:var(--s) center/contain no-repeat;mask:var(--s) center/contain no-repeat}
+.all-link{display:inline-block;margin-top:10px;font-size:16px;text-underline-offset:4px}
+.dh2>div,.dh2>p{max-width:40ch}
+.dhr{display:grid;gap:4px;justify-items:start;max-width:38ch}.dhr p{margin:0}

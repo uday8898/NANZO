@@ -362,23 +362,25 @@ const words = $$('b', stm)
 ;[1, 2].forEach((r) => { $('#r' + r).innerHTML = Array.from({ length: 24 }, (_, k) => `<div class="arch i${(k * (r + 1) + r) % 6}"></div>`).join('') })
 
 /* ---------- scroll jobs ---------- */
-const bar = $('#pr')
+const bar = $('#pr'), nav = $('nav'), heroEl = $('.hero')
+let navSolid = null
 jobs.push(() => {
   const y = scrollY
-  return () => { bar.style.transform = `scaleX(${clamp01(y / Math.max(1, docH - innerHeight))})` }
+  const solid = y > heroEl.offsetHeight - 90
+  return () => {
+    if (solid !== navSolid) { navSolid = solid; nav.classList.toggle('solid', solid) }
+    bar.style.transform = `scaleX(${clamp01(y / Math.max(1, docH - innerHeight))})`
+  }
 })
 
-const stSection = $('.st'), arch1 = $('.a1'), arch2 = $('.a2')
+const stSection = $('.st')
 let lastOn = -1
 jobs.push(() => {
   const r = stSection.getBoundingClientRect()
   const p = clamp01((-r.top + innerHeight * 0.1) / (r.height - innerHeight * 1.1))
-  const y = scrollY * 0.12
   const upto = Math.ceil(p / 0.9 * words.length)
   return () => {
     if (upto !== lastOn) { words.forEach((b, i) => b.classList.toggle('on', i < upto)); lastOn = upto }
-    arch1.style.transform = `translateY(${-y}px)`
-    arch2.style.transform = `translateY(${-y * 1.6}px)`
   }
 })
 

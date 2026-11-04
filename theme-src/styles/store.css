@@ -235,3 +235,8 @@ body.theme-store .tag--sale{background:var(--pink-soft);color:#c93b6e;border-col
 .btn-sm{height:40px;font-size:15px;padding:0 20px}
 @media (max-width:1100px){.coll__grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:760px){.coll__wrap{padding:0 16px}.coll__grid{grid-template-columns:repeat(2,minmax(0,1fr))}.card__body{flex-direction:column;gap:2px}.coll__sort label{display:none}}
+
+.coll__types{display:flex;flex-wrap:wrap;gap:10px;margin-top:clamp(18px,2.4vw,30px)}
+.chip{display:inline-flex;align-items:center;height:42px;padding:0 20px;border:1.5px solid var(--brown);border-radius:99px;text-decoration:none;font-weight:500;font-size:16px;transition:background .2s,color .2s,transform .15s}
+.chip:hover{transform:translateY(-2px)}.chip.is-on{background:var(--brown);color:var(--paper)}
+.swatch-dot[data-name*="mint"]{--sw:#b9ddd1}.swatch-dot[data-name*="butter"],.swatch-dot[data-name*="yellow"]{--sw:#f1de8c}
