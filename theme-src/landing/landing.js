@@ -416,21 +416,25 @@ if (typeof ResizeObserver !== 'undefined') new ResizeObserver(measureDoc).observ
    Pick an occasion, then pick pieces from the two wardrobes. Each one flies into your look; the match bar
    scores the look for the occasion; finish an outfit + bag to complete it. Then add the look to the bag. */
 import { dollSVG, GARMENTS, SLUG, thumbURL } from './doll.js'
-const scene = $('#sc'), wardrobe = $('img', scene)
+import { buildScene } from './scene.js'
+const scene = $('#sc')
+const art = buildScene()
+scene.insertAdjacentHTML('afterbegin', art.svg)
 const OCC = ['Birthday', 'Bachelorette', 'Vacation', 'Date night']
-// [name, x1, y1, x2, y2 (px on the 1338x753 artwork), slot, match with each occasion (0..1)]
+// [name, slot, match with each occasion (0..1)]; the click box comes from where the piece hangs in the drawn wardrobe
 const HOT = [
-  ['Sage ruffle romper', 72, 262, 215, 448, 'dress', [0.6, 0.4, 1, 0.5]],
-  ['Lace camisole', 200, 262, 292, 402, 'top', [0.5, 0.5, 0.7, 0.7]],
-  ['Rose tiered dress', 265, 262, 398, 497, 'dress', [1, 0.6, 0.7, 0.8]],
-  ['Denim jacket', 376, 247, 455, 470, 'outer', [0.4, 0.4, 0.8, 0.5]],
-  ['Quilted rose bag', 340, 500, 438, 555, 'bag', [0.8, 0.6, 0.7, 0.8]],
-  ['Ivory halter', 872, 245, 968, 430, 'top', [0.7, 0.8, 0.8, 0.8]],
-  ['Crimson corset dress', 950, 292, 1065, 484, 'dress', [0.8, 1, 0.3, 1]],
-  ['Cherub top', 1060, 255, 1135, 350, 'top', [0.7, 0.7, 0.6, 0.7]],
-  ['Cherub maxi skirt', 1037, 358, 1150, 636, 'bottom', [0.8, 0.6, 0.9, 0.8]],
-  ['Sequin wrap', 1110, 262, 1275, 472, 'top', [0.9, 1, 0.4, 0.8]],
-].map(([name, x1, y1, x2, y2, slot, s]) => ({ name, x1, y1, x2, y2, slot, s }))
+  ['Sage ruffle romper', 'dress', [0.6, 0.4, 1, 0.5]],
+  ['Lace camisole', 'top', [0.5, 0.5, 0.7, 0.7]],
+  ['Rose tiered dress', 'dress', [1, 0.6, 0.7, 0.8]],
+  ['Denim jacket', 'outer', [0.4, 0.4, 0.8, 0.5]],
+  ['Quilted rose bag', 'bag', [0.8, 0.6, 0.7, 0.8]],
+  ['Ivory halter', 'top', [0.7, 0.8, 0.8, 0.8]],
+  ['Crimson corset dress', 'dress', [0.8, 1, 0.3, 1]],
+  ['Cherub top', 'top', [0.7, 0.7, 0.6, 0.7]],
+  ['Cherub maxi skirt', 'bottom', [0.8, 0.6, 0.9, 0.8]],
+  ['Sequin wrap', 'top', [0.9, 1, 0.4, 0.8]],
+].map(([name, slot, s]) => ({ name, slot, s }))
+HOT.forEach((it) => { const [x1, y1, x2, y2] = art.spots[SLUG[it.name]] || [0, 0, 0, 0]; Object.assign(it, { x1, y1, x2, y2 }) })
 const CELLS = [['top', 'Top / dress'], ['bottom', 'Bottom'], ['outer', 'Jacket'], ['bag', 'Bag']]
 const DEMO_PRICE = 4200
 

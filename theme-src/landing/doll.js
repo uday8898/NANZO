@@ -18,22 +18,22 @@ const heel = `
   <path d="M108 527 Q122 519 137 527 L137 536 Q122 531 108 536Z" fill="#f4b8c8"/>
   <path d="M110 528 Q122 522 135 528" stroke="#fff" stroke-opacity=".6" stroke-width="1.5" fill="none"/>
   <path d="M108 536 Q122 536 137 536 L137 541 Q122 541 110 541Z" fill="#e7a3b6"/>
-  <path d="M110 541 L119 541 L116 566 L112 566Z" fill="#e7a3b6"/>`
+  <path d="M111 541 L118 541 L115 568 L113 568Z" fill="#e7a3b6"/>`
 
 export const DOLL_BACK = `
-  <ellipse cx="135" cy="92" rx="72" ry="64" fill="${HAIR}"/>
+  <g transform="translate(135 152) scale(.9) translate(-135 -152)"><ellipse cx="135" cy="92" rx="72" ry="64" fill="${HAIR}"/>
   ${[[64, 118, 24], [58, 150, 26], [62, 184, 25], [70, 216, 22], [72, 246, 18], [206, 118, 24], [212, 150, 26], [208, 184, 25], [200, 216, 22], [198, 246, 18]]
-    .map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${HAIR}"/><circle cx="${x + (x < 135 ? 4 : -4)}" cy="${y + 4}" r="${r * 0.55}" fill="${HAIR2}" opacity=".35"/>`).join('')}`
+    .map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${HAIR}"/><circle cx="${x + (x < 135 ? 4 : -4)}" cy="${y + 4}" r="${r * 0.55}" fill="${HAIR2}" opacity=".35"/>`).join('')}</g>`
 
 export const DOLL_BODY = `
   <ellipse cx="135" cy="566" rx="44" ry="6" fill="#7a2c48" opacity=".16"/>
-  <path d="M104 306 C96 372 106 448 112 526 L133 526 C136 448 135 380 135 306Z" fill="${SKIN}"/>
-  ${mirror('<path d="M104 306 C96 372 106 448 112 526 L133 526 C136 448 135 380 135 306Z" fill="' + SKIN + '"/>')}
+  <path d="M99 306 C92 356 108 396 111 430 C106 462 111 494 117 526 L130 526 C134 494 130 462 130 430 C136 396 136 350 136 306Z" fill="${SKIN}"/>
+  ${mirror('<path d="M99 306 C92 356 108 396 111 430 C106 462 111 494 117 526 L130 526 C134 494 130 462 130 430 C136 396 136 350 136 306Z" fill="' + SKIN + '"/>')}
   <path d="M130 330 C132 400 131 460 130 526" stroke="${SKIN2}" stroke-width="2" fill="none" opacity=".5"/>
   ${mirror(`<path d="M130 330 C132 400 131 460 130 526" stroke="${SKIN2}" stroke-width="2" fill="none" opacity=".5"/>`)}
   <path d="M123 150 L147 150 L147 168 Q135 176 123 168Z" fill="${SKIN2}"/>
   <path d="M123 156 L147 156 L147 166 L123 166Z" fill="${SKIN}"/>
-  <path d="M121 160 L149 160 Q173 164 173 184 C173 208 161 228 158 252 C161 278 173 296 173 314 L97 314 C97 296 109 278 112 252 C109 228 97 208 97 184 Q97 164 121 160Z" fill="${SKIN}"/>
+  <path d="M121 160 L149 160 Q173 164 173 184 C173 208 160 226 156 250 C160 276 176 296 176 314 L94 314 C94 296 110 276 114 250 C110 226 97 208 97 184 Q97 164 121 160Z" fill="${SKIN}"/>
   <path d="M99 176 L61 298" stroke="${SKIN}" stroke-width="19" stroke-linecap="round"/>
   <path d="M171 176 L209 298" stroke="${SKIN}" stroke-width="19" stroke-linecap="round"/>
   <circle cx="58" cy="309" r="10.5" fill="${SKIN}"/><circle cx="212" cy="309" r="10.5" fill="${SKIN}"/>
@@ -41,21 +41,26 @@ export const DOLL_BODY = `
   ${heel}${mirror(heel)}
   <g id="lb"><path d="M108 178 Q135 190 162 178 L164 220 Q135 230 106 220Z" fill="#fff0ee"/><path d="M108 178 Q135 190 162 178" stroke="#f1c9cd" stroke-width="2" fill="none"/></g>
   <g id="ls"><path d="M99 302 L171 302 L176 346 L137 346 L135 330 L133 346 L94 346Z" fill="#fff0ee"/><rect x="99" y="302" width="72" height="7" fill="#f6d5d8"/></g>
-  <ellipse cx="135" cy="92" rx="45" ry="51" fill="${SKIN}"/>
+  <g transform="translate(135 152) scale(.9) translate(-135 -152)"><ellipse cx="135" cy="92" rx="45" ry="51" fill="${SKIN}"/>
   <ellipse cx="91" cy="98" rx="6" ry="10" fill="${SKIN}"/><ellipse cx="179" cy="98" rx="6" ry="10" fill="${SKIN}"/>
   <circle cx="116" cy="102" r="9" fill="#f9a3ad" opacity=".45"/><circle cx="154" cy="102" r="9" fill="#f9a3ad" opacity=".45"/>
-  <ellipse cx="117" cy="94" rx="6.5" ry="8.5" fill="${INK}"/><ellipse cx="153" cy="94" rx="6.5" ry="8.5" fill="${INK}"/>
+  <ellipse cx="117" cy="87" rx="11" ry="6" fill="#d98a9a" opacity=".5"/><ellipse cx="153" cy="87" rx="11" ry="6" fill="#d98a9a" opacity=".5"/>
+  <ellipse cx="117" cy="94" rx="6.5" ry="8" fill="${INK}"/><ellipse cx="153" cy="94" rx="6.5" ry="8" fill="${INK}"/>
+  <path d="M129 90 Q117 80 105 88 L99 83 M141 90 Q153 80 165 88 L171 83" stroke="${INK}" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M104 86 l-3 -5 M110 83 l-2 -5 M166 86 l3 -5 M160 83 l2 -5" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>
   <circle cx="119" cy="91" r="2.6" fill="#fff"/><circle cx="155" cy="91" r="2.6" fill="#fff"/>
-  <path d="M108 80 Q117 74 126 79 M144 79 Q153 74 162 80" stroke="${HAIR2}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-  <path d="M129 116 Q135 121 141 116" stroke="#d9707f" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M106 78 Q117 68 128 77 M142 77 Q153 68 164 78" stroke="${HAIR2}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <path d="M122 115 Q129 109 135 112 Q141 109 148 115 Q135 128 122 115Z" fill="#cf2f52"/><path d="M124 115 Q135 119 146 115" stroke="#8f1632" stroke-width="1.2" fill="none"/><ellipse cx="131" cy="118" rx="4" ry="1.6" fill="#fff" opacity=".55"/>
+  <path d="M104 112 Q116 124 128 126 M166 112 Q154 124 142 126" stroke="${SKIN2}" stroke-width="2" fill="none" opacity=".55"/><circle cx="148" cy="108" r="1.2" fill="${INK}"/>
   <path d="M135 104 L133 109 L137 109" stroke="${SKIN2}" stroke-width="1.5" fill="none" stroke-linecap="round"/>`
 
+const lock = `<path d="M96 108 C72 136 102 154 84 184 C70 210 98 226 90 258 L108 258 C118 222 92 206 106 176 C120 146 100 130 108 106Z" fill="${HAIR}"/><path d="M98 130 C90 150 104 164 94 190" stroke="#8a5238" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>`
 export const DOLL_HAIR = `
+  <g transform="translate(135 152) scale(.9) translate(-135 -152)">
   <path d="M88 92 Q84 36 135 32 Q186 36 182 92 Q178 66 160 58 Q146 80 104 62 Q92 70 88 92Z" fill="${HAIR}"/>
-  <path d="M104 62 Q130 70 150 58" stroke="${HAIR2}" stroke-width="2" fill="none" opacity=".5"/>
-  ${[[84, 130, 15], [80, 160, 16], [86, 190, 15], [186, 130, 15], [190, 160, 16], [184, 190, 15]]
-    .map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${HAIR}"/><circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${HAIR2}" stroke-opacity=".4" stroke-width="2"/>`).join('')}
-  ${[[76, 46], [196, 50], [102, 28], [172, 28]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="9" fill="#f48fb1"/><circle cx="${x}" cy="${y}" r="4" fill="#fff"/>`).join('')}`
+  <path d="M104 62 Q130 70 150 58" stroke="#8a5238" stroke-width="2.4" fill="none" opacity=".6"/>
+  ${lock}${mirror(lock)}
+  ${[[76, 46], [196, 50], [102, 28]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="8" fill="#f48fb1"/><circle cx="${x}" cy="${y}" r="3.6" fill="#fff"/>`).join('')}</g>`
 
 /* ---------------- the garments ---------------- */
 const cloud = (id) => `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9bb9da"/><stop offset=".55" stop-color="#cfdcec"/><stop offset="1" stop-color="#f7e8d8"/></linearGradient>`
