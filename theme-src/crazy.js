@@ -164,7 +164,11 @@ export function initLandingCrazy() {
     trail()
   }
   pearls(true)
-  // keep the dark hero clean: pearls only float once you are past it
-  const hero = document.querySelector('.hero'), pl = document.querySelector('.pearls')
-  if (hero && pl) new IntersectionObserver(([e]) => pl.classList.toggle('is-off', e.intersectionRatio > 0.35), { threshold: [0, 0.35, 1] }).observe(hero)
+  // hero cards + shell follow the pointer
+  const hero = document.querySelector('.hero'), rig = document.querySelector('.h3d__rig')
+  if (hero && rig && fine) hero.addEventListener('pointermove', (e) => {
+    const r = hero.getBoundingClientRect()
+    rig.style.setProperty('--hx', ((e.clientX - r.left) / r.width - 0.5).toFixed(3))
+    rig.style.setProperty('--hy', ((e.clientY - r.top) / r.height - 0.5).toFixed(3))
+  })
 }

@@ -47,11 +47,19 @@
 <header class="hero" id="top">
   <div class="fresco" aria-hidden="true"><i class="spark"></i></div>
   <div class="moon"></div>
-  <div>
+  {%- comment -%} 3D hero: a swinging shell and three floating arch cards that follow the pointer (the fresco above is hidden by CSS) {%- endcomment -%}
+  <div class="h3d" aria-hidden="true">
+    <div class="h3d__rig">
+      <i class="h3d__shell"></i>
+      <i class="h3d__card hc1"></i><i class="h3d__card hc2"></i><i class="h3d__card hc3"></i>
+    </div>
+  </div>
+  <div class="hero__txt">
     <h1 class="lg" role="img" aria-label="Nanzo"></h1>
     <div class="sub p">After Hours</div>
     <p class="ln">The first drop. Clothes for the part of the day that starts when everything else stops.</p>
     <a class="hero-cta" href="#drop">Shop the drop</a>
+    <a class="hero-cta hero-cta--alt" href="{{ routes.all_products_collection_url }}">Shop all</a>
   </div>
 </header>
 <div class="mq p" aria-hidden="true"><div id="mq"></div></div>
