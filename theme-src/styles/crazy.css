@@ -18,8 +18,8 @@
 @keyframes twink{0%,100%{opacity:0;transform:scale(.4) rotate(0)}50%{opacity:.85;transform:scale(1.15) rotate(40deg)}}
 
 /* ---- sparkle trail ---- */
-.spark{position:fixed;z-index:200;pointer-events:none;color:var(--hot);font-size:15px;text-shadow:0 0 10px rgba(249,168,192,.9);animation:spark .9s ease-out forwards}
-@keyframes spark{from{opacity:1;transform:translate(-50%,-50%) scale(var(--s,1))}to{opacity:0;transform:translate(calc(-50% + var(--dx,0px)),calc(-50% + 46px)) scale(.2) rotate(120deg)}}
+.nzs{position:fixed;z-index:200;pointer-events:none;color:var(--hot);font-size:14px;animation:nzspark .9s ease-out forwards}
+@keyframes nzspark{from{opacity:1;transform:translate(-50%,-50%) scale(var(--s,1))}to{opacity:0;transform:translate(calc(-50% + var(--dx,0px)),calc(-50% + 46px)) scale(.2) rotate(120deg)}}
 
 /* ---- tilt cards: media tilts in 3D, a glare follows the pointer, the shadow swings the other way ---- */
 body.theme-store .card__media{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--sc,1));will-change:transform;
@@ -145,3 +145,9 @@ body.theme-store .card:hover .price{transform:scale(1.12) rotate(-3deg);color:va
 .hero-cta:active,.atc:active,.gb:active{transform:translateY(4px);box-shadow:0 1px 0 #25140a}
 @media (max-width:1000px){.pg{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 @media (max-width:760px){.pg{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+.pearls--front{transition:opacity .6s}.pearls--front.is-off{opacity:0}
+.theme-landing .nzs{color:var(--pink)}
+/* nav: always readable, over the dark hero and once it turns solid */
+nav:not(.solid){background:linear-gradient(180deg,rgba(41,27,15,.55),transparent)}
+nav.solid,nav.solid a,nav.solid .lg,nav.solid .bagl{color:var(--ink)}

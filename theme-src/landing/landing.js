@@ -369,7 +369,7 @@ const bar = $('#pr'), nav = $('nav'), heroEl = $('.hero')
 let navSolid = null
 jobs.push(() => {
   const y = scrollY
-  const solid = y > heroEl.offsetHeight - 90
+  const solid = y > Math.max(240, heroEl.offsetHeight - 90)
   return () => {
     if (solid !== navSolid) { navSolid = solid; nav.classList.toggle('solid', solid) }
     bar.style.transform = `scaleX(${clamp01(y / Math.max(1, docH - innerHeight))})`

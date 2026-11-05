@@ -116,7 +116,7 @@ export function trail() {
     if (now - last < 55) return
     last = now
     const s = document.createElement('span')
-    s.className = 'spark'
+    s.className = 'nzs'
     s.textContent = ['✦', '✧', '♡', '·'][(Math.random() * 4) | 0]
     s.style.cssText = `left:${e.clientX + (Math.random() - 0.5) * 14}px;top:${e.clientY + (Math.random() - 0.5) * 14}px;--dx:${((Math.random() - 0.5) * 40).toFixed(0)}px;--s:${(0.7 + Math.random() * 0.9).toFixed(2)}`
     document.body.appendChild(s)
@@ -164,4 +164,7 @@ export function initLandingCrazy() {
     trail()
   }
   pearls(true)
+  // keep the dark hero clean: pearls only float once you are past it
+  const hero = document.querySelector('.hero'), pl = document.querySelector('.pearls')
+  if (hero && pl) new IntersectionObserver(([e]) => pl.classList.toggle('is-off', e.intersectionRatio > 0.35), { threshold: [0, 0.35, 1] }).observe(hero)
 }
