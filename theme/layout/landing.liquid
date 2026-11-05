@@ -20,6 +20,7 @@
     {{ content_for_header }}
 
     {{ 'landing.css' | asset_url | stylesheet_tag }}
+    {{ 'crazy.css' | asset_url | stylesheet_tag }}
     <script>
       window.nz = {
         currency: {{ shop.currency | json }},
