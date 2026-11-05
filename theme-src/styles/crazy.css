@@ -1,0 +1,120 @@
+/* ================================================================
+   CRAZY CHIC LAYER: 3D tilt, glare, letter flips, pearls, glossy buttons
+   (driven by crazy.js; every rule is additive and safe without JS)
+   ================================================================ */
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+
+/* ---- floating glossy pearls + sparkles, behind everything ---- */
+.pearls{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.pearl{position:absolute;display:block;will-change:transform}
+.pearl b{display:block;width:100%;height:100%;border-radius:50%;animation:bob var(--bob,7s) ease-in-out var(--del,0s) infinite;
+  background:radial-gradient(circle at 32% 26%,#fff 0 7%,rgba(255,255,255,0) 26%),radial-gradient(circle at 50% 50%,var(--p1) 0 40%,var(--p2) 78%,var(--p3) 100%);
+  box-shadow:inset -6px -10px 18px rgba(75,46,27,.18),inset 4px 6px 12px rgba(255,255,255,.55),0 22px 30px -12px rgba(75,46,27,.28)}
+.pearl--pink{--p1:#fbc4d6;--p2:#f48db0;--p3:#d9618c}
+.pearl--mint{--p1:#e3f3ee;--p2:#a9d3c6;--p3:#6fa795}
+.pearl--gold{--p1:#fff0b8;--p2:#e8cc6a;--p3:#b8923a}
+@keyframes bob{50%{transform:translateY(-16px) scale(1.04)}}
+.twink{position:absolute;color:var(--hot);text-shadow:0 0 12px rgba(242,107,151,.7);animation:twink 3.2s ease-in-out var(--del,0s) infinite;opacity:0}
+@keyframes twink{0%,100%{opacity:0;transform:scale(.4) rotate(0)}50%{opacity:.85;transform:scale(1.15) rotate(40deg)}}
+
+/* ---- sparkle trail ---- */
+.spark{position:fixed;z-index:200;pointer-events:none;color:var(--hot);font-size:15px;text-shadow:0 0 10px rgba(249,168,192,.9);animation:spark .9s ease-out forwards}
+@keyframes spark{from{opacity:1;transform:translate(-50%,-50%) scale(var(--s,1))}to{opacity:0;transform:translate(calc(-50% + var(--dx,0px)),calc(-50% + 46px)) scale(.2) rotate(120deg)}}
+
+/* ---- tilt cards: media tilts in 3D, a glare follows the pointer, the shadow swings the other way ---- */
+body.theme-store .card__media{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--sc,1));will-change:transform;
+  transition:box-shadow .35s,transform .45s cubic-bezier(.2,.8,.2,1);
+  box-shadow:0 18px 26px -18px rgba(75,46,27,.35)}
+body.theme-store .card__media.is-tilting{transition:box-shadow .2s,transform .06s linear}
+body.theme-store .card:hover .card__media{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--sc,1.03));
+  box-shadow:calc(var(--tx,0)*-16px) calc(16px + var(--ty,0)*-12px) 0 -6px rgba(249,168,192,.95),0 30px 40px -20px rgba(75,46,27,.45)}
+body.theme-store .card__img{transform:scale(1.08) translate(calc(var(--tx,0)*-8px),calc(var(--ty,0)*-8px));transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .4s}
+body.theme-store .card:hover .card__img{transform:scale(1.12) translate(calc(var(--tx,0)*-12px),calc(var(--ty,0)*-12px))}
+.glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:3;opacity:0;transition:opacity .3s;
+  background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.75) 0,rgba(255,255,255,.18) 28%,transparent 55%);mix-blend-mode:soft-light}
+.is-tilting>.glare,.card:hover .glare{opacity:1}
+body.theme-store .tag{transform:translate(calc(var(--tx,0)*6px),calc(var(--ty,0)*6px));z-index:4;box-shadow:0 4px 0 rgba(75,46,27,.15)}
+body.theme-store .card__title,body.theme-store .price{transition:transform .3s,color .3s}
+body.theme-store .card:hover .card__title{transform:translateX(4px)}
+body.theme-store .card:hover .price{transform:scale(1.12) rotate(-3deg);color:var(--hot)}
+
+/* cards swing up from the floor as they enter (staggered by column) */
+.c3d{opacity:0;transform:perspective(1000px) rotateX(34deg) translateY(60px) scale(.94)!important;transform-origin:50% 100%;transition:opacity .8s,transform .9s cubic-bezier(.2,.9,.2,1);transition-delay:calc(var(--ci,0)*.09s)}
+.c3d.c3d-in{opacity:1;transform:none!important}
+
+/* ---- product gallery: tilting holo frame ---- */
+.pdp__tiltwrap{position:relative;isolation:isolate;transform:perspective(1100px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--sc,1));transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.pdp__tiltwrap.is-tilting{transition:transform .06s linear}
+.pdp__tiltwrap::before{content:'';position:absolute;inset:-9px;z-index:-1;border-radius:clamp(30px,3.4vw,52px);filter:blur(16px);opacity:.7;
+  background:conic-gradient(from var(--a),#f9a8c0,#e8cc6a,#cfe5de,#c9b3ee,#f9a8c0);animation:spin 7s linear infinite}
+.pdp__tiltwrap::after{content:'';position:absolute;inset:0;z-index:-1;border-radius:clamp(26px,3vw,46px);box-shadow:calc(var(--tx,0)*-22px) calc(30px + var(--ty,0)*-14px) 50px -18px rgba(75,46,27,.5)}
+.pdp__tiltwrap>.glare{border-radius:clamp(26px,3vw,46px);mix-blend-mode:overlay;z-index:5;background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),rgba(255,255,255,.85) 0,rgba(255,255,255,.2) 30%,transparent 58%)}
+@keyframes spin{to{--a:360deg}}
+.pdp__slide img{transform:scale(1.07) translate(calc(var(--tx,0)*-10px),calc(var(--ty,0)*-10px));transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.pdp__thumb:hover{transform:perspective(500px) translateX(6px) rotateY(-14deg) scale(1.04);box-shadow:-8px 10px 0 -2px rgba(249,168,192,.7)}
+.pdp__thumb.is-active{transform:perspective(500px) translateX(8px) rotateY(-10deg)}
+
+/* ---- titles flip up letter by letter ---- */
+.is-split .w{display:inline-block;white-space:nowrap}
+.is-split .ch{display:inline-block;transform-origin:50% 100%;animation:chIn .9s cubic-bezier(.2,.9,.2,1) both;animation-delay:calc(var(--i)*.035s + .15s);transition:transform .3s cubic-bezier(.3,1.6,.5,1),color .2s;white-space:pre}
+.is-split .ch:hover{transform:translateY(-.12em) rotate(-6deg) scale(1.12);color:var(--hot)}
+@keyframes chIn{from{opacity:0;transform:perspective(500px) rotateX(-95deg) translateY(.5em)}60%{opacity:1}}
+.pdp__title.is-split,.coll__title.is-split{text-shadow:0 1px 0 rgba(255,255,255,.7),0 2px 0 rgba(249,168,192,.55),0 3px 0 rgba(249,168,192,.4),0 5px 12px rgba(75,46,27,.18)}
+.pdp__tagline.is-split .ch,.coll__tag.is-split .ch{animation-delay:calc(var(--i)*.03s + .7s)}
+
+/* ---- scroll entrances ---- */
+.r3d{opacity:0;transform:perspective(1000px) rotateX(-16deg) translateY(34px);transform-origin:50% 0;transition:opacity .8s,transform .9s cubic-bezier(.2,.9,.2,1);transition-delay:var(--d,0s)}
+.r3d.r3d-in{opacity:1;transform:none}
+
+/* ---- glossy 3D buttons: extruded edge, sheen, press-down ---- */
+.btn-brown,.btn-pink{position:relative;overflow:hidden;translate:var(--mx,0) var(--my,0);
+  box-shadow:0 5px 0 var(--edge),0 14px 20px -8px rgba(75,46,27,.45),inset 0 2px 0 rgba(255,255,255,.35);
+  transition:transform .18s,filter .2s,box-shadow .18s,translate .2s}
+.btn-brown{--edge:#25140a;background:linear-gradient(180deg,#6a4529,#4b2e1b 55%,#3a2213)}
+.btn-pink{--edge:#d9739b;background:linear-gradient(180deg,#fcd6e3,#f9c4d6 55%,#f5a9c3)}
+.btn-brown::after,.btn-pink::after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;transform:skewX(-22deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transition:left .6s;pointer-events:none}
+.btn-brown:hover::after,.btn-pink:hover::after{left:130%}
+.btn-brown:hover,.btn-pink:hover{transform:translateY(-3px);box-shadow:0 8px 0 var(--edge),0 20px 24px -8px rgba(75,46,27,.5),inset 0 2px 0 rgba(255,255,255,.4)}
+.btn-brown:active,.btn-pink:active{transform:translateY(4px);box-shadow:0 1px 0 var(--edge),0 4px 8px -4px rgba(75,46,27,.4),inset 0 2px 0 rgba(255,255,255,.2)}
+.chip,.occ__pill,.pager__a{translate:var(--mx,0) var(--my,0);box-shadow:0 3px 0 rgba(75,46,27,.2);transition:background .2s,color .2s,transform .15s,box-shadow .15s,translate .2s}
+.chip:hover,.occ__pill:hover,.pager__a:hover{box-shadow:0 6px 0 rgba(249,168,192,.9)}
+.chip.is-on,.occ__pill.is-active{box-shadow:0 3px 0 var(--hot)}
+.bagbtn{translate:var(--mx,0) var(--my,0);filter:drop-shadow(0 6px 6px rgba(75,46,27,.25))}
+
+/* ---- buy bar: frosted glass ---- */
+.buybar{background:linear-gradient(180deg,rgba(250,246,238,.9),rgba(250,246,238,.97));backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);box-shadow:0 -14px 30px -14px rgba(75,46,27,.3)}
+.buybar::before{content:'';position:absolute;left:0;right:0;top:-1.5px;height:2px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--pink),var(--gold),var(--mint),var(--pink),transparent);background-size:200% 100%;animation:sheen 5s linear infinite}
+@keyframes sheen{to{background-position:200% 0}}
+.buybar__thumb{box-shadow:0 8px 0 -3px rgba(249,168,192,.8),0 12px 18px -8px rgba(75,46,27,.4);transform:perspective(400px) rotateY(-12deg);transition:transform .4s}
+.buybar:hover .buybar__thumb{transform:perspective(400px) rotateY(0) scale(1.06)}
+.buybar__now{background:linear-gradient(100deg,var(--brown) 30%,var(--hot) 50%,var(--brown) 70%);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:price 4s ease-in-out infinite}
+@keyframes price{0%,100%{background-position:100% 0}50%{background-position:0 0}}
+
+/* ---- balls, shells, badge, accordions: tactile 3D ---- */
+.swatch__ball{box-shadow:inset -4px -6px 10px rgba(0,0,0,.22),inset 3px 4px 8px rgba(255,255,255,.5),0 8px 10px -3px rgba(75,46,27,.4)}
+.swatch:hover .swatch__ball{transform:translateY(-4px) scale(1.12)}
+.swatch:has(input:checked) .swatch__ball{transform:translateY(-3px) scale(1.08)}
+.size__shell{filter:drop-shadow(0 4px 0 rgba(75,46,27,.22))}
+.size:hover .size__shell{transform:translateY(-4px) scale(1.1) rotate(-5deg)}
+.size input:checked~.size__shell{filter:drop-shadow(0 5px 0 #e0709a);transform:translateY(-2px) scale(1.06)}
+.pdp__badge{position:relative;overflow:hidden;box-shadow:0 4px 0 rgba(75,46,27,.18),inset 0 2px 0 rgba(255,255,255,.7)}
+.pdp__badge::after{content:'';position:absolute;top:0;bottom:0;left:-40%;width:30%;transform:skewX(-22deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);animation:badge 3.6s ease-in-out infinite;pointer-events:none}
+@keyframes badge{0%,55%{left:-40%}100%{left:140%}}
+.pdp__badge .lg{animation:wob 3s ease-in-out infinite}
+@keyframes wob{50%{transform:rotate(14deg) scale(1.15)}}
+.stars .star{filter:drop-shadow(0 2px 0 rgba(75,46,27,.25));transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.stars:hover .star{transform:translateY(-3px) rotate(-8deg)}
+.acc{transition:transform .3s,background .3s}
+.acc:hover{transform:translateX(6px);background:linear-gradient(90deg,rgba(249,196,214,.25),transparent)}
+.occ__bar i{box-shadow:0 0 14px rgba(244,115,154,.8),inset 0 2px 0 rgba(255,255,255,.6)}
+.pin__row input{box-shadow:inset 0 3px 6px rgba(75,46,27,.12)}
+.coll__bar{border-radius:99px;border:1.5px solid rgba(75,46,27,.16);padding:12px 22px;background:rgba(255,255,255,.55);backdrop-filter:blur(8px);box-shadow:0 10px 24px -14px rgba(75,46,27,.4)}
+
+@media (prefers-reduced-motion:reduce){
+  .pearl b,.twink,.pdp__badge::after,.buybar::before,.buybar__now,.pdp__tiltwrap::before,.pdp__badge .lg{animation:none}
+  .r3d,.c3d{opacity:1;transform:none!important}
+}
+@media (max-width:900px){
+  .pearls{opacity:.7}
+  .pdp__thumb:hover,.pdp__thumb.is-active{transform:none}
+}
