@@ -8,7 +8,7 @@ const fine = matchMedia('(hover:hover) and (pointer:fine)').matches
 const lerp = (a, b, t) => a + (b - a) * t
 
 /* generic "tilt toward the pointer" with a moving glare. Sets CSS vars; the CSS owns the transform. */
-function tiltEl(el, { max = 12, scale = 1.025, glare = true, host = el } = {}) {
+export function tiltEl(el, { max = 12, scale = 1.025, glare = true, host = el } = {}) {
   let g
   if (glare) { g = document.createElement('i'); g.className = 'glare'; g.setAttribute('aria-hidden', 'true'); host.appendChild(g) }
   let tx = 0, ty = 0, cx = 0, cy = 0, on = false, raf = 0, gx = 50, gy = 50
@@ -44,21 +44,22 @@ function tilts() {
 }
 
 /* titles: every letter flips up in 3D, and lifts when you hover it */
-function splitTitles() {
-  document.querySelectorAll('.pdp__title, .coll__title, .pdp__tagline, .coll__tag').forEach((el) => {
+export function splitTitles(sel = '.pdp__title, .coll__title, .pdp__tagline, .coll__tag', lazy = false) {
+  const io = lazy ? new IntersectionObserver((l) => l.forEach((e) => { if (e.isIntersecting) { e.target.classList.replace('split-wait', 'is-split'); io.unobserve(e.target) } }), { threshold: 0.35 }) : null
+  document.querySelectorAll(sel).forEach((el) => {
     if (el.dataset.split) return
     el.dataset.split = '1'
     const text = el.textContent.trim()
     el.setAttribute('aria-label', text)
     let i = 0
-    el.innerHTML = text.split(/\s+/).map((w) => `<span class="w" aria-hidden="true">${[...w].map((c) => `<span class="ch" style="--i:${i++}">${c}</span>`).join('')}</span>`).join(' ')
-    el.classList.add('is-split')
+    el.innerHTML = text.split(/\s+/).map((w) => `<span class="nzw" aria-hidden="true">${[...w].map((c) => `<span class="nzc" style="--i:${i++}">${c}</span>`).join('')}</span>`).join(' ')
+    if (io) { el.classList.add('split-wait'); io.observe(el) } else el.classList.add('is-split')
   })
 }
 
 /* buttons lean toward the pointer */
-function magnetic() {
-  document.querySelectorAll('.btn-brown, .btn-pink, .chip, .pager__a, .bagbtn').forEach((b) => {
+export function magnetic(sel = '.btn-brown, .btn-pink, .chip, .pager__a, .bagbtn') {
+  document.querySelectorAll(sel).forEach((b) => {
     b.addEventListener('pointermove', (e) => {
       const r = b.getBoundingClientRect()
       b.style.setProperty('--mx', ((e.clientX - r.left - r.width / 2) * 0.22).toFixed(1) + 'px')
@@ -69,9 +70,9 @@ function magnetic() {
 }
 
 /* glossy pearls drifting at different depths behind the page */
-function pearls() {
+export function pearls(front = false) {
   const layer = document.createElement('div')
-  layer.className = 'pearls'
+  layer.className = front ? 'pearls pearls--front' : 'pearls'
   layer.setAttribute('aria-hidden', 'true')
   const defs = [ // x%, y%, size px, depth, tone
     [6, 14, 74, 0.9, 'pink'], [90, 10, 120, 0.5, 'mint'], [93, 52, 56, 1.1, 'gold'], [3, 58, 130, 0.45, 'pink'],
@@ -100,14 +101,14 @@ function pearls() {
   addEventListener('scroll', () => { sy = scrollY }, { passive: true })
   const tick = () => {
     px = lerp(px, tx, 0.06); py = lerp(py, ty, 0.06); csy = lerp(csy, sy, 0.08)
-    for (const { o, d } of items) o.style.transform = `translate3d(${(-px * 90 * d).toFixed(1)}px,${(-py * 70 * d - csy * 0.12 * d).toFixed(1)}px,0)`
+    for (const { o, d } of items) o.style.transform = `translate3d(${(-px * 90 * d).toFixed(1)}px,${(-py * 70 * d + Math.sin(csy / 650 + d * 2.1) * 90 * d).toFixed(1)}px,0)`
     requestAnimationFrame(tick)
   }
   tick()
 }
 
 /* sparkle trail behind the pointer */
-function trail() {
+export function trail() {
   if (!fine) return
   let last = 0
   addEventListener('pointermove', (e) => {
@@ -151,4 +152,16 @@ export function initCrazy() {
   cardsDepth()
   if (fine) { tilts(); magnetic(); trail() }
   pearls()
+}
+
+/* the landing page gets the same layer (its own palette, its own sections) */
+export function initLandingCrazy() {
+  if (reduceMotion) return
+  splitTitles('.dh2 h2, .ht h2, .pl > h2, .ch h2, .cu h2, .pk h2, .gr > h2', true)
+  if (fine) {
+    document.querySelectorAll('#pg .pz').forEach((c) => tiltEl(c, { max: 12, scale: 1.04, host: c.querySelector('.arch') }))
+    magnetic('.hero-cta, .atc, .gb, .all-link, .bagl')
+    trail()
+  }
+  pearls(true)
 }

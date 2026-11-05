@@ -55,12 +55,12 @@ body.theme-store .card:hover .price{transform:scale(1.12) rotate(-3deg);color:va
 .pdp__thumb.is-active{transform:perspective(500px) translateX(8px) rotateY(-10deg)}
 
 /* ---- titles flip up letter by letter ---- */
-.is-split .w{display:inline-block;white-space:nowrap}
-.is-split .ch{display:inline-block;transform-origin:50% 100%;animation:chIn .9s cubic-bezier(.2,.9,.2,1) both;animation-delay:calc(var(--i)*.035s + .15s);transition:transform .3s cubic-bezier(.3,1.6,.5,1),color .2s;white-space:pre}
-.is-split .ch:hover{transform:translateY(-.12em) rotate(-6deg) scale(1.12);color:var(--hot)}
+.is-split .nzw{display:inline-block;white-space:nowrap}
+.is-split .nzc{display:inline-block;transform-origin:50% 100%;animation:chIn .9s cubic-bezier(.2,.9,.2,1) both;animation-delay:calc(var(--i)*.035s + .15s);transition:transform .3s cubic-bezier(.3,1.6,.5,1),color .2s;white-space:pre}
+.is-split .nzc:hover{transform:translateY(-.12em) rotate(-6deg) scale(1.12);color:var(--hot)}
 @keyframes chIn{from{opacity:0;transform:perspective(500px) rotateX(-95deg) translateY(.5em)}60%{opacity:1}}
 .pdp__title.is-split,.coll__title.is-split{text-shadow:0 1px 0 rgba(255,255,255,.7),0 2px 0 rgba(249,168,192,.55),0 3px 0 rgba(249,168,192,.4),0 5px 12px rgba(75,46,27,.18)}
-.pdp__tagline.is-split .ch,.coll__tag.is-split .ch{animation-delay:calc(var(--i)*.03s + .7s)}
+.pdp__tagline.is-split .nzc,.coll__tag.is-split .nzc{animation-delay:calc(var(--i)*.03s + .7s)}
 
 /* ---- scroll entrances ---- */
 .r3d{opacity:0;transform:perspective(1000px) rotateX(-16deg) translateY(34px);transform-origin:50% 0;transition:opacity .8s,transform .9s cubic-bezier(.2,.9,.2,1);transition-delay:var(--d,0s)}
@@ -118,3 +118,30 @@ body.theme-store .card:hover .price{transform:scale(1.12) rotate(-3deg);color:va
   .pearls{opacity:.7}
   .pdp__thumb:hover,.pdp__thumb.is-active{transform:none}
 }
+
+/* ================= landing page (own palette) ================= */
+.theme-landing{--hot:#f26b97;--pink:#f9a8c0;--mint:#cfe5de;--brown:#4E331B}
+.pearls--front{z-index:6}
+.pearls--front .pearl{opacity:.92}
+/* split headings wait for their moment */
+.split-wait .nzc{opacity:0}
+/* the drop: always a plain grid so every piece is easy to open */
+.drop{height:auto!important}
+.stk{position:static!important;height:auto!important;overflow:visible!important;padding-bottom:clamp(40px,6vw,90px)}
+.pg{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:none!important;gap:clamp(18px,2.4vw,40px) clamp(12px,2vw,30px)!important;max-width:1200px!important;flex:none!important}
+.pz{opacity:1!important;transform:none!important}
+.pz .arch{flex:none!important;width:100%;aspect-ratio:3/4;position:relative;overflow:hidden;
+  transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(var(--sc,1));transition:transform .45s cubic-bezier(.2,.8,.2,1),border-radius .5s,box-shadow .5s}
+.pz .arch.is-tilting,.pz.is-tilting .arch{transition:transform .06s linear,border-radius .5s,box-shadow .5s}
+.pz:hover .arch{box-shadow:calc(var(--tx,0)*-18px) calc(22px + var(--ty,0)*-12px) 40px -10px rgba(74,15,34,.4),0 0 0 3px var(--pink)}
+.pz.is-tilting>.glare{display:none}
+.pz .arch>.glare{opacity:0}
+.pz:hover .arch>.glare{opacity:1}
+.pz .t{transition:transform .3s,color .3s}.pz:hover .t{transform:translateY(-3px);color:var(--hot)}
+.pz .q{opacity:1!important;width:38px;height:38px;box-shadow:0 4px 0 rgba(75,46,27,.25);transition:transform .25s}.pz .q:hover{transform:scale(1.15) rotate(90deg)}
+.fb2{opacity:1!important}
+.hero-cta,.atc,.gb{box-shadow:0 5px 0 #25140a,0 14px 20px -8px rgba(75,46,27,.45),inset 0 2px 0 rgba(255,255,255,.3);translate:var(--mx,0) var(--my,0);transition:transform .18s,box-shadow .18s,background .3s,color .3s,translate .2s}
+.hero-cta:hover,.atc:hover,.gb:hover{transform:translateY(-3px);box-shadow:0 8px 0 #25140a,0 20px 24px -8px rgba(75,46,27,.5)}
+.hero-cta:active,.atc:active,.gb:active{transform:translateY(4px);box-shadow:0 1px 0 #25140a}
+@media (max-width:1000px){.pg{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media (max-width:760px){.pg{grid-template-columns:repeat(2,minmax(0,1fr))!important}}

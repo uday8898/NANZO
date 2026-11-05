@@ -1,5 +1,7 @@
 import './landing.css'
 import { flyToBag } from '../fly.js'
+import { initLandingCrazy } from '../crazy.js'
+import '../styles/crazy.css'
 
 /* ------------------------------------------------------------------------------------------------
    nanzo "After Hours" landing page.
@@ -293,7 +295,8 @@ const cards = pieces.map((p) => {
   d.type = 'button'
   d.className = 'pz'
   d.innerHTML = `<span class="q" aria-hidden="true">+</span><span class="arch" data-t="${p.image ? '' : 'photo'}" style="--g:${p.grad};${p.image ? `background:url(${esc(p.image)}) center/cover` : ''}"></span><span class="t p">${esc(p.title)}</span><small>${inr(p.price)}</small>`
-  d.addEventListener('click', () => quickView(p, d))
+  // a card opens the product page; the little + opens the quick view (no url yet = placeholder, so quick view)
+  d.addEventListener('click', (e) => { if (p.url && !e.target.closest('.q')) location.href = p.url; else quickView(p, d) })
   pg.appendChild(d)
   return d
 })
@@ -392,7 +395,8 @@ function layDrop() {
   const g = pg.getBoundingClientRect()
   base = cards.map((c) => { const r = c.getBoundingClientRect(); return [g.left + g.width / 2 - (r.left + r.width / 2), g.top + g.height / 2 - (r.top + r.height / 2)] })
 }
-const flat = () => innerWidth < 760 || reduce
+// the pinned fan-out stack made products hard to open: the drop is now always a plain, clickable grid (stack code kept below)
+const flat = () => true || innerWidth < 760 || reduce
 jobs.push(() => {
   if (flat()) return () => { cards.forEach((c) => { c.style.transform = ''; c.style.opacity = 1 }); fb2.classList.add('on') }
   const r = dropEl.getBoundingClientRect()
@@ -790,3 +794,5 @@ if (fine && !reduce) {
     if (!running) { running = true; requestAnimationFrame(move) }
   })
 }
+
+initLandingCrazy()
