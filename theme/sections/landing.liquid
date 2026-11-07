@@ -39,7 +39,7 @@
 <nav aria-label="Main">
   <a href="#top" aria-label="Nanzo" class="lg"></a>
   <span>
-    <a href="#drop">After Hours</a><a href="{{ routes.all_products_collection_url }}">Shop all</a><a href="#currency">Currency</a><a href="#pack">Packaging</a><a href="#world">Our world</a>
+    <a href="#drop">After Hours</a><a href="{{ routes.all_products_collection_url }}">Shop all</a><a href="#currency">Currency</a><a href="{{ routes.root_url }}pages/our-world">Our world</a>
     <button type="button" class="bagl" id="bag" aria-haspopup="dialog">Bag (<span id="bagn">0</span>)</button>
   </span>
 </nav>
@@ -58,48 +58,27 @@
     <h1 class="lg" role="img" aria-label="Nanzo"></h1>
     <div class="sub p">After Hours</div>
     <p class="ln">The first drop. Clothes for the part of the day that starts when everything else stops.</p>
-    <a class="hero-cta" href="#drop">Shop the drop</a>
+    <a class="hero-cta" href="{{ coll.url | default: routes.all_products_collection_url }}">Shop After Hours</a>
     <a class="hero-cta hero-cta--alt" href="{{ routes.all_products_collection_url }}">Shop all</a>
   </div>
 </header>
-<div class="mq p" aria-hidden="true"><div id="mq"></div></div>
+<div class="mq p legacy" aria-hidden="true"><div id="mq"></div></div>
+
+{%- comment -%} 2. quote + a small deck of pieces (compact on purpose) {%- endcomment -%}
+<section class="qt" id="quote">
+  <div class="qt__in">
+    <p class="qt__q p" id="qtq">all that you deserve. and some more.</p>
+    <div class="qt__deck" aria-hidden="true">
+      <i class="qt__c qc1"><b></b></i><i class="qt__c qc2"><b></b></i><i class="qt__c qc3"><b></b></i>
+    </div>
+  </div>
+</section>
 
 <section class="drop" id="drop"><div class="stk">
   <div class="dh2"><h2 class="p">After Hours</h2><div class="dhr"><p>Drop 01. Eight pieces, each with its own packaging and a little something to keep. When they’re gone, they’re gone.</p><a class="all-link" href="{{ routes.all_products_collection_url }}">Shop all pieces &rarr;</a></div></div>
   <div class="pg" id="pg"></div>
   <div class="fb2" id="fb2"><span class="p">Wear the whole night.</span><button class="atc" id="all" type="button">Add all to cart</button></div>
 </div></section>
-
-<section class="st"><p class="p" id="stm">all that you deserve. and some more.</p></section>
-
-<section class="ht" id="heart">
-  <div class="arch i0"></div>
-  <div>
-    <h2 class="p">The “I have nothing to wear” moment.</h2>
-    <p>Every girl knows the feeling. The flights are booked, the invite is close, the wardrobe is full, and somehow there’s nothing to wear.</p>
-    <p>Nanzo was born for that moment. Not for Tuesdays, but for birthdays, bachelorettes, vacations and the nights you’ll want photos of. Every print and silhouette is chosen because we’re in love with it, never because it’s trending.</p>
-    <p>And we don’t design alone. Before a piece is final, it’s tried on, talked about and reworked with the girls of India.</p>
-  </div>
-</section>
-<section class="ms"><div class="bg i1"></div><div class="mt"><h2 class="p">No girl in front of a full wardrobe with nothing to wear for the moments that matter.</h2><p>We believe occasions deserve outfits with intention, not leftovers from an ordinary week.</p></div></section>
-<section class="pl"><h2 class="p">Three pillars</h2><div class="pls"><div style="--c:var(--powder)"><h3 class="p">Love over trend</h3><p>We only make what we’re in love with.</p></div><div style="--c:var(--rose)"><h3 class="p">Made for occasions</h3><p>Birthdays, bachelorettes, vacations, big nights. Not everyday wear.</p></div><div style="--c:var(--matcha)"><h3 class="p">Co-created</h3><p>Every piece is tried on, discussed and reworked with our community.</p></div></div></section>
-<section class="ch"><div><h2 class="p">If Nanzo were a person, she’d be</h2><ul><li><b>The friend who plans the party</b>Enthusiastic and dependable.</li><li><b>Opinionated about taste</b>No need to follow the crowd.</li><li><b>Inclusive</b>She asks for opinions and actually uses them.</li><li><b>Fun with substance</b>She cares about how things are made.</li></ul></div><div class="arch i3"></div></section>
-
-<section class="cu" id="currency">
-  <div><div class="nt i6" role="img" aria-label="A Nanzo currency note"></div></div>
-  <div>
-    <h2 class="p">Nanzo currency</h2>
-    <p>Every order comes with Nanzo currency. Collect 5 and your next piece is 50% off. Collect 7 and one piece is on us. Whichever you choose.</p>
-    <div class="sl" id="sl"><i></i><i></i><i></i><i></i><i data-r="50% off"></i><i></i><i data-r="1 piece free"></i></div>
-    <p id="cm" class="p"></p>
-    <div class="cb"><button class="atc" id="o" type="button">Place an order</button><button class="atc" id="r5" type="button" hidden>Use 50% off</button><button class="atc" id="r7" type="button" hidden>Claim free piece</button></div>
-  </div>
-</section>
-
-<section class="pk" id="pack">
-  <div><h2 class="p">Every piece arrives in a gift.</h2><p>Each collection has its own packaging and something small to keep. A currency note is tucked in every order.</p><p class="hint2">Tap the box.</p></div>
-  <button class="bx" id="bx" type="button" data-cur="open" aria-label="Open the box" aria-pressed="false"><span class="bd"><span class="sh2"></span></span><span class="in"><span class="cl"></span><span class="nt2 i6"></span></span><span class="lid"></span></button>
-</section>
 
 <section class="gr" id="ready">
   <h2 class="p">Get ready with nanzo</h2>
@@ -123,7 +102,47 @@
   </div>
 </section>
 
-<section class="wd" id="world">
+{%- comment -%} 5. founder {%- endcomment -%}
+<section class="ab" id="about">
+  {%- if section.settings.founder_photo != blank -%}
+    <div class="arch" style="background:url('{{ section.settings.founder_photo | image_url: width: 1000 }}') center/cover"></div>
+  {%- else -%}
+    <div class="arch" data-t="founder portrait"></div>
+  {%- endif -%}
+  <div>
+    <p class="w ab__kick">the girl behind nanzo</p>
+    <h2 class="p">{% if section.settings.founder_name != blank %}Hello, I’m {{ section.settings.founder_name }}.{% else %}Meet the founder.{% endif %}</h2>
+    <p>Nanzo is a small label making clothes that feel like an occasion. Every collection arrives with its own world, its own packaging and a little collectible to keep, because getting dressed should feel like opening a gift.</p>
+    <div class="rte">{{ section.settings.founder_story }}</div>
+    <a class="hero-cta hero-cta--alt" href="{{ routes.root_url }}pages/our-world">Read our story</a>
+  </div>
+</section>
+
+<section class="cu" id="currency">
+  <div><div class="nt i6" role="img" aria-label="A Nanzo currency note"></div></div>
+  <div>
+    <h2 class="p">Nanzo currency</h2>
+    <p>Every order comes with Nanzo currency. Collect 5 and your next piece is 50% off. Collect 7 and one piece is on us. Whichever you choose.</p>
+    <div class="sl" id="sl"><i></i><i></i><i></i><i></i><i data-r="50% off"></i><i></i><i data-r="1 piece free"></i></div>
+    <p id="cm" class="p"></p>
+    <div class="cb"><button class="atc" id="o" type="button">Place an order</button><button class="atc" id="r5" type="button" hidden>Use 50% off</button><button class="atc" id="r7" type="button" hidden>Claim free piece</button></div>
+  </div>
+</section>
+
+{%- comment -%} 7. nanzo world: a small teaser on desktop, the full page lives at /pages/our-world {%- endcomment -%}
+<section class="wt" id="world-teaser">
+  <div class="wt__in">
+    <div class="wt__txt">
+      <p class="w">step inside</p>
+      <h2 class="p">Nanzo world</h2>
+      <p>Packaging, raw shoots, the girls and the thinking behind every drop.</p>
+      <a class="hero-cta" href="{{ routes.root_url }}pages/our-world">Enter our world</a>
+    </div>
+    <div class="wt__tiles" aria-hidden="true"><i class="wt1"></i><i class="wt2"></i><i class="wt3"></i></div>
+  </div>
+</section>
+
+<section class="wd legacy" id="world">
   <h2 class="p">Nanzo world</h2>
   <p class="wl">Every collection brings its own packaging, events, creators and styles. Step inside a movement.</p>
   <div class="col">
@@ -137,25 +156,48 @@
   <small>Updated every month with raw images from the collection, the brand and the packaging.</small>
 </section>
 
-{%- if section.settings.founder_name != blank -%}
-<section class="ab" id="about">
-  {%- if section.settings.founder_photo != blank -%}
-    <div class="arch" style="background:url('{{ section.settings.founder_photo | image_url: width: 1000 }}') center/cover"></div>
-  {%- else -%}
-    <div class="arch" data-t="founder portrait"></div>
-  {%- endif -%}
-  <div>
-    <h2 class="p">Hello, I’m {{ section.settings.founder_name }}.</h2>
-    <p>Nanzo is a small label making clothes that feel like an occasion. Every collection arrives with its own world, its own packaging and a little collectible to keep, because getting dressed should feel like opening a gift.</p>
-    <div class="rte">{{ section.settings.founder_story }}</div>
+<section class="pl"><h2 class="p">Three pillars</h2><div class="pls"><div style="--c:var(--powder)"><h3 class="p">Love over trend</h3><p>We only make what we’re in love with.</p></div><div style="--c:var(--rose)"><h3 class="p">Made for occasions</h3><p>Birthdays, bachelorettes, vacations, big nights. Not everyday wear.</p></div><div style="--c:var(--matcha)"><h3 class="p">Co-created</h3><p>Every piece is tried on, discussed and reworked with our community.</p></div></div></section>
+{%- comment -%} 9. what nanzo girls say (edit in the theme editor: add "Review" blocks; these are the defaults) {%- endcomment -%}
+<section class="say" id="say">
+  <h2 class="p">What nanzo girls say</h2>
+  <div class="say__row">
+    {%- if section.blocks.size > 0 -%}
+      {%- for b in section.blocks -%}
+        <figure class="say__c" {{ b.shopify_attributes }}><span class="say__s" aria-label="{{ b.settings.stars }} out of 5">{% for i in (1..b.settings.stars) %}★{% endfor %}</span><blockquote>{{ b.settings.text }}</blockquote><figcaption><b>{{ b.settings.name }}</b>{% if b.settings.city != blank %}<small>{{ b.settings.city }}</small>{% endif %}</figcaption></figure>
+      {%- endfor -%}
+    {%- else -%}
+      <figure class="say__c"><span class="say__s" aria-label="5 out of 5">★★★★★</span><blockquote>Wore it to my best friend’s birthday and got asked where it was from all night. The fit is unreal.</blockquote><figcaption><b>Aanya</b><small>Mumbai</small></figcaption></figure>
+      <figure class="say__c"><span class="say__s" aria-label="5 out of 5">★★★★★</span><blockquote>The packaging made me squeal. The little collectible inside? I’m keeping it forever.</blockquote><figcaption><b>Riya</b><small>Bengaluru</small></figcaption></figure>
+      <figure class="say__c"><span class="say__s" aria-label="5 out of 5">★★★★★</span><blockquote>Finally a brand that gets the “nothing to wear” panic. Found my bachelorette outfit in one scroll.</blockquote><figcaption><b>Simran</b><small>Delhi</small></figcaption></figure>
+      <figure class="say__c"><span class="say__s" aria-label="4 out of 5">★★★★☆</span><blockquote>Soft, dreamy and actually comfortable for a full night out. Already eyeing the next drop.</blockquote><figcaption><b>Meher</b><small>Pune</small></figcaption></figure>
+      <figure class="say__c"><span class="say__s" aria-label="5 out of 5">★★★★★</span><blockquote>The currency idea is so cute. Two orders in and I’m chasing the free piece.</blockquote><figcaption><b>Tara</b><small>Hyderabad</small></figcaption></figure>
+    {%- endif -%}
   </div>
 </section>
-{%- endif -%}
+
+<section class="st legacy"><p class="p" id="stm">all that you deserve. and some more.</p></section>
+
+<section class="ht legacy" id="heart">
+  <div class="arch i0"></div>
+  <div>
+    <h2 class="p">The “I have nothing to wear” moment.</h2>
+    <p>Every girl knows the feeling. The flights are booked, the invite is close, the wardrobe is full, and somehow there’s nothing to wear.</p>
+    <p>Nanzo was born for that moment. Not for Tuesdays, but for birthdays, bachelorettes, vacations and the nights you’ll want photos of. Every print and silhouette is chosen because we’re in love with it, never because it’s trending.</p>
+    <p>And we don’t design alone. Before a piece is final, it’s tried on, talked about and reworked with the girls of India.</p>
+  </div>
+</section>
+<section class="ms legacy"><div class="bg i1"></div><div class="mt"><h2 class="p">No girl in front of a full wardrobe with nothing to wear for the moments that matter.</h2><p>We believe occasions deserve outfits with intention, not leftovers from an ordinary week.</p></div></section>
+<section class="ch legacy"><div><h2 class="p">If Nanzo were a person, she’d be</h2><ul><li><b>The friend who plans the party</b>Enthusiastic and dependable.</li><li><b>Opinionated about taste</b>No need to follow the crowd.</li><li><b>Inclusive</b>She asks for opinions and actually uses them.</li><li><b>Fun with substance</b>She cares about how things are made.</li></ul></div><div class="arch i3"></div></section>
+
+<section class="pk legacy" id="pack">
+  <div><h2 class="p">Every piece arrives in a gift.</h2><p>Each collection has its own packaging and something small to keep. A currency note is tucked in every order.</p><p class="hint2">Tap the box.</p></div>
+  <button class="bx" id="bx" type="button" data-cur="open" aria-label="Open the box" aria-pressed="false"><span class="bd"><span class="sh2"></span></span><span class="in"><span class="cl"></span><span class="nt2 i6"></span></span><span class="lid"></span></button>
+</section>
 
 <footer id="ft">
   <div style="position:relative">
     <h2 class="p">Nothing to wear? Not tonight.</h2>
-    <div class="fl"><a href="#drop">After Hours</a><a href="{{ routes.all_products_collection_url }}">Shop all</a><a href="#currency">Currency</a><a href="#pack">Packaging</a><a href="#ready">Get ready</a><a href="#world">Our world</a><a href="{{ instagram }}" target="_blank" rel="noopener">Instagram</a><a href="/policies/shipping-policy">Shipping and returns</a></div>
+    <div class="fl"><a href="#drop">After Hours</a><a href="{{ routes.all_products_collection_url }}">Shop all</a><a href="#currency">Currency</a><a href="#ready">Get ready</a><a href="{{ routes.root_url }}pages/our-world">Our world</a><a href="{{ instagram }}" target="_blank" rel="noopener">Instagram</a><a href="/policies/shipping-policy">Shipping and returns</a></div>
     <p class="hint">Run your hand through the shells. Someone left something.</p>
   </div>
   <div class="lg fo" role="img" aria-label="Nanzo"></div>
@@ -226,6 +268,14 @@
     { "type": "image_picker", "id": "photo_4", "label": "Raw shoot 2" },
     { "type": "image_picker", "id": "photo_5", "label": "Raw shoot 1" },
     { "type": "image_picker", "id": "photo_6", "label": "Currency note" }
+  ],
+  "blocks": [
+    { "type": "review", "name": "Review", "settings": [
+      { "type": "text", "id": "name", "label": "Name", "default": "Aanya" },
+      { "type": "text", "id": "city", "label": "City", "default": "Mumbai" },
+      { "type": "textarea", "id": "text", "label": "Review", "default": "Loved it." },
+      { "type": "range", "id": "stars", "label": "Stars", "min": 1, "max": 5, "step": 1, "default": 5 }
+    ] }
   ],
   "presets": [{ "name": "Landing page" }]
 }

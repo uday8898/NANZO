@@ -194,7 +194,8 @@ export function createRenderer({ assetUrl, store = false }) {
       const name = hit ? hit[1] : '404'
       // `?store=1` (or opts.store) renders the full-store templates (*.store.json) instead of coming-soon
       const useStore = store || /[?&]store(=|&|$)/.test(url)
-      const tplFile = useStore && exists('templates', `${name}.store.json`) ? `${name}.store.json` : `${name}.json`
+      const suffix = name === 'page' ? pathname.split('/').pop() : ''
+      const tplFile = useStore && suffix && exists('templates', `${name}.${suffix}.store.json`) ? `${name}.${suffix}.store.json` : useStore && exists('templates', `${name}.store.json`) ? `${name}.store.json` : `${name}.json`
       const tpl = JSON.parse(read('templates', tplFile))
       const handle = pathname.split('/').pop()
       const product = PRODUCTS.find((p) => p.handle === handle) || PRODUCTS[0]

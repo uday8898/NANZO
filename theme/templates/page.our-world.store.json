@@ -1,0 +1,4 @@
+{
+  "sections": { "main": { "type": "our-world", "settings": {} } },
+  "order": ["main"]
+}

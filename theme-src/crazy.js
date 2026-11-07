@@ -152,6 +152,66 @@ export function initCrazy() {
   cardsDepth()
   if (fine) { tilts(); magnetic(); trail() }
   pearls()
+  ourWorld()
+}
+
+/* ---------- home page sections ---------- */
+function onView(el, cb, threshold = 0.25) {
+  if (!el) return
+  const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { cb(); io.disconnect() } }, { threshold })
+  io.observe(el)
+}
+function homeSections() {
+  // 2. quote: words light up one by one, then the little deck of pieces fans out
+  const q = document.getElementById('qtq'), qt = document.querySelector('.qt')
+  if (q && qt) {
+    const words = q.textContent.trim().split(/\s+/)
+    q.setAttribute('aria-label', words.join(' '))
+    q.innerHTML = words.map((w) => `<span class="qw" aria-hidden="true">${w}</span>`).join(' ')
+    const spans = [...q.querySelectorAll('.qw')]
+    onView(qt, () => {
+      qt.classList.add('is-in')
+      spans.forEach((sp, i) => setTimeout(() => sp.classList.add('on'), 220 + i * 160))
+    }, 0.3)
+    const imgs = (() => { try { return JSON.parse(document.getElementById('nzl-products')?.textContent || '[]').map((p) => p.image).filter(Boolean) } catch { return [] } })()
+    qt.querySelectorAll('.qt__c').forEach((c, i) => { if (imgs[i]) c.style.background = `url(${imgs[i]}) center/cover` })
+  }
+  // 3. After Hours: every piece starts as a shell and turns into its block
+  const pg = document.getElementById('pg')
+  if (pg) {
+    const cells = [...pg.querySelectorAll('.pz')]
+    cells.forEach((c, i) => { c.classList.add('js-shell'); c.style.setProperty('--dl', (i * 0.1).toFixed(2) + 's'); const sh = document.createElement('i'); sh.className = 'shl'; sh.setAttribute('aria-hidden', 'true'); c.prepend(sh) })
+    onView(pg, () => requestAnimationFrame(() => cells.forEach((c) => c.classList.add('is-block'))), 0.2)
+  }
+  // 8. USP: the three blocks build up
+  const pl = document.querySelector('.pl')
+  if (pl) { pl.classList.add('js-usp'); onView(pl, () => pl.classList.add('is-in'), 0.3) }
+  // founder portrait + review cards tilt
+  if (fine) {
+    document.querySelectorAll('.ab .arch').forEach((a) => tiltEl(a, { max: 8, scale: 1.02, glare: false }))
+    document.querySelectorAll('.say__c').forEach((c) => tiltEl(c, { max: 7, scale: 1.02, glare: false }))
+  }
+}
+
+/* ---------- Our world page: fixed title, two columns drifting at different speeds ---------- */
+function ourWorld() {
+  const ow = document.querySelector('[data-ow]')
+  if (!ow) return
+  const cols = [...ow.querySelectorAll('.ow__col')], grid = ow.querySelector('.ow__grid')
+  const tiles = [...ow.querySelectorAll('.ow__t, .ow__txt, .ow__end > *')]
+  tiles.forEach((t) => t.classList.add('reveal-up'))
+  const io = new IntersectionObserver((l) => l.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: 0.12 })
+  tiles.forEach((t) => io.observe(t))
+  if (fine) ow.querySelectorAll('.ow__t').forEach((t) => tiltEl(t, { max: 5, scale: 1.015, glare: false }))
+  const k = [-140, 200]
+  let cur = 0.5
+  const tick = () => {
+    const r = grid.getBoundingClientRect(), p = Math.min(1, Math.max(0, (innerHeight - r.top) / (r.height + innerHeight)))
+    cur = lerp(cur, p, 0.1)
+    cols.forEach((c, i) => { c.style.transform = `translate3d(0,${((cur - 0.5) * (k[i] || 0)).toFixed(1)}px,0)` })
+    requestAnimationFrame(tick)
+  }
+  tick()
 }
 
 /* the landing page gets the same layer (its own palette, its own sections) */
@@ -164,6 +224,7 @@ export function initLandingCrazy() {
     trail()
   }
   pearls(true)
+  homeSections()
   // hero cards + shell follow the pointer
   const hero = document.querySelector('.hero'), rig = document.querySelector('.h3d__rig')
   if (hero && rig && fine) hero.addEventListener('pointermove', (e) => {
