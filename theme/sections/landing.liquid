@@ -197,7 +197,7 @@
 <footer id="ft">
   <div style="position:relative">
     <h2 class="p">Nothing to wear? Not tonight.</h2>
-    <div class="fl"><a href="#drop">After Hours</a><a href="{{ routes.all_products_collection_url }}">Shop all</a><a href="#currency">Currency</a><a href="#ready">Get ready</a><a href="{{ routes.root_url }}pages/our-world">Our world</a><a href="{{ instagram }}" target="_blank" rel="noopener">Instagram</a><a href="/policies/shipping-policy">Shipping and returns</a></div>
+    <div class="fl"><a href="#drop">After Hours</a><a href="{{ routes.all_products_collection_url }}">Shop all</a><a href="#currency">Currency</a><a href="#ready">Get ready</a><a href="{{ routes.root_url }}pages/our-world">Our world</a><a href="{{ instagram }}" target="_blank" rel="noopener">Instagram</a>{% if shop.shipping_policy.body != blank %}<a href="/policies/shipping-policy">Shipping and returns</a>{% endif %}</div>
     <p class="hint">Run your hand through the shells. Someone left something.</p>
   </div>
   <div class="lg fo" role="img" aria-label="Nanzo"></div>

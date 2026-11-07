@@ -5,9 +5,11 @@
     </a>
 
     <nav class="shdr__nav" aria-label="Main">
-      {%- for link in linklists[section.settings.menu].links -%}
-        <a href="{{ link.url }}">{{ link.title }}</a>
-      {%- endfor -%}
+      {%- comment -%} fixed nanzo links (the Shopify default menu was Home / Catalog / Contact). To use a menu again, switch this back to: for link in linklists[section.settings.menu].links {%- endcomment -%}
+      <a href="{{ routes.root_url }}">Home</a>
+      <a href="{{ routes.all_products_collection_url }}">Shop all</a>
+      <a href="{{ routes.collections_url }}after-hours">After Hours</a>
+      <a href="{{ routes.root_url }}pages/our-world">Our world</a>
     </nav>
 
     <div class="shdr__actions">

@@ -145,6 +145,12 @@ function cardsDepth() {
 }
 
 export function initCrazy() {
+  const w404 = document.querySelector('[data-ow-404]')
+  if (w404 && /\/pages\/our-world\/?$/.test(location.pathname)) {
+    w404.hidden = false
+    document.querySelector('.sheet.page-top')?.setAttribute('hidden', '')
+    document.title = 'Our world'
+  }
   if (!document.body.classList.contains('theme-store')) return
   if (reduceMotion) return
   splitTitles()

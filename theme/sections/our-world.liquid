@@ -3,6 +3,7 @@
   at different speeds (layout idea from the reference). No story, pillars, currency or founder copy here: those are
   their own sections on the home page.
 {%- endcomment -%}
+{%- if template.name == '404' -%}<div data-ow-404 hidden>{%- endif -%}
 <style>.ow{--s:url('{{ 'shell.png' | asset_url }}')}</style>
 <section class="ow" data-ow>
   <h1 class="ow__title" aria-label="Our world"><span>OUR</span> <span>WORLD</span></h1>
@@ -11,15 +12,15 @@
     <div class="ow__col">
       <figure class="ow__t ow__t--tall" style="--img:url('{{ 'landing-i0.webp' | asset_url }}')"><figcaption>Raw shoot</figcaption></figure>
       <figure class="ow__t ow__t--sq" style="--img:url('{{ 'landing-i3.webp' | asset_url }}')"><figcaption>Behind the scenes</figcaption></figure>
-      <figure class="ow__t ow__t--arch" style="--g:linear-gradient(#FCB1C5,#FFFAF0)"><i></i><figcaption>The box</figcaption></figure>
       <figure class="ow__t ow__t--tall" style="--img:url('{{ 'landing-i5.webp' | asset_url }}')"><figcaption>After Hours</figcaption></figure>
+      <figure class="ow__t ow__t--sq" style="--img:url('{{ 'landing-i1.webp' | asset_url }}');--pos:50% 20%"><figcaption>The box</figcaption></figure>
     </div>
 
     <div class="ow__col ow__col--b">
-      <figure class="ow__t ow__t--sq" style="--img:url('{{ 'landing-i1.webp' | asset_url }}')"><figcaption>Campaign</figcaption></figure>
-      <figure class="ow__t ow__t--tall" style="--img:url('{{ 'landing-i4.webp' | asset_url }}')"><figcaption>Raw shoot</figcaption></figure>
+      <figure class="ow__t ow__t--tall" style="--img:url('{{ 'landing-i4.webp' | asset_url }}')"><figcaption>Campaign</figcaption></figure>
       <figure class="ow__t ow__t--sq" style="--img:url('{{ 'landing-i2.webp' | asset_url }}')"><figcaption>Fitting day</figcaption></figure>
-      <figure class="ow__t ow__t--arch" style="--g:linear-gradient(#D9E8E1,#FFE9EF)"><i></i><figcaption>The collectible</figcaption></figure>
+      <figure class="ow__t ow__t--tall" style="--img:url('{{ 'landing-i1.webp' | asset_url }}');--pos:30% 50%"><figcaption>Raw shoot</figcaption></figure>
+      <figure class="ow__t ow__t--sq" style="--img:url('{{ 'landing-i3.webp' | asset_url }}');--pos:50% 10%"><figcaption>The collectible</figcaption></figure>
     </div>
   </div>
 
@@ -27,6 +28,7 @@
     <a class="btn-brown" href="{{ routes.all_products_collection_url }}">Shop After Hours</a>
   </div>
 </section>
+{%- if template.name == '404' -%}</div>{%- endif -%}
 
 {% schema %}
 { "name": "Our world", "settings": [], "presets": [{ "name": "Our world" }] }
