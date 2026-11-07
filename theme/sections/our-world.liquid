@@ -1,32 +1,29 @@
 {%- comment -%}
-  Our world: a huge fixed title over two staggered columns of tall pictures that drift at different speeds.
-  Layout idea taken from the reference; every word, picture and shape here is nanzo's own.
+  Our world: ONLY the visual world page. A huge fixed title over two staggered columns of tall pictures that drift
+  at different speeds (layout idea from the reference). No story, pillars, currency or founder copy here: those are
+  their own sections on the home page.
 {%- endcomment -%}
 <style>.ow{--s:url('{{ 'shell.png' | asset_url }}')}</style>
 <section class="ow" data-ow>
   <h1 class="ow__title" aria-label="Our world"><span>OUR</span> <span>WORLD</span></h1>
 
   <div class="ow__grid">
-    <div class="ow__col" data-par="0.04">
-      <figure class="ow__t ow__t--tall" style="--img:url('{{ 'landing-i0.webp' | asset_url }}')"><figcaption>Love over trend</figcaption></figure>
-      <div class="ow__txt"><p class="w">the “I have nothing to wear” moment</p><p>Every girl knows the feeling. The flights are booked, the invite is close, the wardrobe is full, and somehow there’s nothing to wear. Nanzo was born for that moment.</p></div>
-      <figure class="ow__t ow__t--sq" style="--img:url('{{ 'landing-i3.webp' | asset_url }}')"><figcaption>Co-created with the girls of India</figcaption></figure>
+    <div class="ow__col">
+      <figure class="ow__t ow__t--tall" style="--img:url('{{ 'landing-i0.webp' | asset_url }}')"><figcaption>Raw shoot</figcaption></figure>
+      <figure class="ow__t ow__t--sq" style="--img:url('{{ 'landing-i3.webp' | asset_url }}')"><figcaption>Behind the scenes</figcaption></figure>
       <figure class="ow__t ow__t--arch" style="--g:linear-gradient(#FCB1C5,#FFFAF0)"><i></i><figcaption>The box</figcaption></figure>
-      <figure class="ow__t ow__t--tall" style="--img:url('{{ 'landing-i5.webp' | asset_url }}')"><figcaption>Raw shoot</figcaption></figure>
+      <figure class="ow__t ow__t--tall" style="--img:url('{{ 'landing-i5.webp' | asset_url }}')"><figcaption>After Hours</figcaption></figure>
     </div>
 
-    <div class="ow__col ow__col--b" data-par="-0.07">
-      <figure class="ow__t ow__t--sq" style="--img:url('{{ 'landing-i1.webp' | asset_url }}')"><figcaption>Made for occasions</figcaption></figure>
-      <figure class="ow__t ow__t--tall" style="--img:url('{{ 'landing-i4.webp' | asset_url }}')"><figcaption>After Hours, drop 01</figcaption></figure>
-      <div class="ow__txt"><p class="w">not for tuesdays</p><p>Birthdays, bachelorettes, vacations and the nights you’ll want photos of. Every print and silhouette is chosen because we’re in love with it, never because it’s trending.</p></div>
-      <figure class="ow__t ow__t--sq" style="--img:url('{{ 'landing-i2.webp' | asset_url }}')"><figcaption>Tried on, talked about, reworked</figcaption></figure>
-      <figure class="ow__t ow__t--arch" style="--g:linear-gradient(#D9E8E1,#FFE9EF)"><i></i><figcaption>Nanzo currency</figcaption></figure>
+    <div class="ow__col ow__col--b">
+      <figure class="ow__t ow__t--sq" style="--img:url('{{ 'landing-i1.webp' | asset_url }}')"><figcaption>Campaign</figcaption></figure>
+      <figure class="ow__t ow__t--tall" style="--img:url('{{ 'landing-i4.webp' | asset_url }}')"><figcaption>Raw shoot</figcaption></figure>
+      <figure class="ow__t ow__t--sq" style="--img:url('{{ 'landing-i2.webp' | asset_url }}')"><figcaption>Fitting day</figcaption></figure>
+      <figure class="ow__t ow__t--arch" style="--g:linear-gradient(#D9E8E1,#FFE9EF)"><i></i><figcaption>The collectible</figcaption></figure>
     </div>
   </div>
 
   <div class="ow__end">
-    <h2 class="p">If nanzo were a person, she’d be the friend who plans the party.</h2>
-    <p>Enthusiastic and dependable. Opinionated about taste. Inclusive, and fun with substance.</p>
     <a class="btn-brown" href="{{ routes.all_products_collection_url }}">Shop After Hours</a>
   </div>
 </section>
